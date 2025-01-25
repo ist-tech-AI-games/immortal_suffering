@@ -3,7 +3,6 @@
 ## :pushpin: Description
 
 IST-TECH AI Video Game Project: Immortal Suffering
-VR FPS + Tower Defense
 
 ## :fireworks: Screenshots
 
