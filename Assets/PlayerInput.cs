@@ -23,9 +23,12 @@ public class PlayerInput : MonoBehaviour
     [Header("Options")]
     public bool SimulateIfInputIsInputed = false;
     [Header("Flags")]
-    public bool SimulateEnabled = true;
+    [SerializeField] private bool isUserInputed = false;
+    [SerializeField] private bool SimulateEnabled = true;
     [Header("Input")]
     [SerializeField] private bool[] moveInput = new bool[5];
+    [Header("Components")]
+    [SerializeField] private CharacterMovement characterMovement;
 
     // For Unity User Simulate Test
     public void OnMove(InputValue value)
@@ -36,12 +39,14 @@ public class PlayerInput : MonoBehaviour
         moveInput[2] = vector2.x < 0; // A : Move Left
         moveInput[3] = vector2.y < 0; // S : Down Jump
         moveInput[4] = vector2.x > 0; // D : Move Right
+        isUserInputed = true;
     }
 
     public void OnAttack(InputValue value)
     {
         // Input 처리 - InputSystem_Actions 사용
         moveInput[0] = value.isPressed; // Attack
+        isUserInputed = true;
     }
 
     private void FixedUpdate()
@@ -82,25 +87,20 @@ public class PlayerInput : MonoBehaviour
             Move(filteredMoveInput);
         }
 
-        moveInput = new bool[5] { false, false, false, false, false };
+        if (isUserInputed)
+        {
+            isUserInputed = false;
+            moveInput = new bool[5] { false, false, false, false, false };
+        }
     }
 
     private void Move(bool[] moveInput)
     {
-        // 이동 처리 로직을 여기에 작성
-        // 예: 애니메이션 재생, 위치 업데이트 등
-        // 현재는 단순히 로그 출력
-        Debug.Log($"Move Input: W={moveInput[0]}, A={moveInput[1]}, S={moveInput[2]}, D={moveInput[3]}");
-
-        // 실제 이동 로직은 여기에 추가해야 합니다.
-        // 예를 들어, Rigidbody를 사용하여 물리 기반 이동을 구현할 수 있습니다.
+        characterMovement.Move(moveInput);
     }
 
     private void Attack()
     {
-        Debug.Log("Attack performed");
-        // Attack 처리 로직을 여기에 작성
-        // 예: 애니메이션 재생, 공격력 적용 등
-        // 현재는 단순히 로그 출력
+        characterMovement.Attack();
     } 
 }
