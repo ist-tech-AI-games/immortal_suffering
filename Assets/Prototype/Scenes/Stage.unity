@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 11664240}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -209,7 +209,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!4 &11664243
 Transform:
@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 282129487}
   - component: {fileID: 282129490}
   - component: {fileID: 282129489}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: OneWayPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -594,16 +594,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: -7, y: 1, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: -6, y: 1, z: 0}
     second:
       serializedVersion: 2
@@ -686,13 +676,13 @@ Tilemap:
       m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 33
+  - m_RefCount: 32
     m_Data: {fileID: 11400000, guid: 46bf80bebcfd8f8408546508a6ff8e5e, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 33
+  - m_RefCount: 32
     m_Data: {fileID: 1436025186, guid: aa62edeb75cef8444a4f1b474cf7acbf, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 33
+  - m_RefCount: 32
     m_Data:
       e00: 1
       e01: 0
@@ -711,7 +701,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 33
+  - m_RefCount: 32
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -1328,7 +1318,7 @@ MonoBehaviour:
     Weight: 4
   - Prefab: {fileID: 6336660662771533221, guid: cdb9d2ad6b23854438646a6d37db271c, type: 3}
     Weight: 2
-  minCount: 3
+  minCount: 9
   maxCount: 10
 --- !u!4 &1500996448
 Transform:
@@ -1464,6 +1454,7 @@ GameObject:
   - component: {fileID: 1980782751}
   - component: {fileID: 1980782750}
   - component: {fileID: 1980782753}
+  - component: {fileID: 1980782754}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1539,7 +1530,7 @@ Transform:
   m_GameObject: {fileID: 1980782749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9, y: -6, z: -10}
+  m_LocalPosition: {x: -13, y: -8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1589,6 +1580,26 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1818360608 &1980782754
+PositionConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980782749}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Weight: 1
+  m_TranslationAtRest: {x: -13, y: -8, z: -10}
+  m_TranslationOffset: {x: 0, y: 2, z: -10}
+  m_AffectTranslationX: 1
+  m_AffectTranslationY: 1
+  m_AffectTranslationZ: 1
+  m_Active: 1
+  m_IsLocked: 1
+  m_Sources:
+  - sourceTransform: {fileID: 11664243}
+    weight: 1
 --- !u!1 &2114228673
 GameObject:
   m_ObjectHideFlags: 0
