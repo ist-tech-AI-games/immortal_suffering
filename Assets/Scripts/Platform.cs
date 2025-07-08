@@ -9,7 +9,6 @@ public class Platform : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Platform Collision Entered with: " + collision.collider.name);
         CharacterMovement characterMovement = collision.gameObject.GetComponent<CharacterMovement>();
         if (characterMovement) {
             characterMovement.CharacterLandedTriggered(platformCollider); // Set the onFeetCollider to this platform

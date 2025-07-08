@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
@@ -14,6 +13,8 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private bool faceIsLeft = false; // Flag for moving left
     [SerializeField] private bool isOnGroundOrPlatform = false; // Flag for ground state
     [SerializeField] private bool isOnEnemy = false; // Flag for ground state
+    private Vector2 beforeSpeed; // Used for Wall Bounce
+    [SerializeField] private float damageGot = 0.0f;
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5.0f;
     [SerializeField] private float moveDelay = 0.3f;
@@ -35,6 +36,17 @@ public class CharacterMovement : MonoBehaviour
         characterCollider = GetComponent<Collider2D>();
         groundMask = LayerMask.GetMask(new string[] { "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "Enemy" });
+
+        //Variable Initialization
+        rb.linearVelocity = Vector2.zero; // Reset velocity
+        currentState = PlayerState.Idle; // Start in Idle state
+        jumpCount = 0; // Reset jump count
+        remainingMoveTime = 0.0f; // Reset move timer
+        faceIsLeft = false; // Start facing right
+        isOnGroundOrPlatform = false; // Reset ground state
+        isOnEnemy = false; // Reset enemy state
+        onFeetCollider = null; // Reset onFeetCollider
+        damageGot = 0.0f; // Reset damage taken
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -46,7 +58,6 @@ public class CharacterMovement : MonoBehaviour
     private void FixedUpdate()
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
-        Debug.DrawRay(transform.position, Vector2.down * 1.05f, Color.red); // Debug line for ground check
         if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down, Vector2.down, 0.05f, groundMask))
         {
             isOnGroundOrPlatform = true;
@@ -88,12 +99,46 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
         }
+
+        if (currentState == PlayerState.AttackedAndStunned)
+        {
+            beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
+            rb.linearVelocity *= 0.99f; // Apply a slight damping effect to the velocity
+            if (rb.linearVelocity.magnitude < 0.1f)
+            {
+                currentState = PlayerState.Idle; // Reset state to Idle if velocity is low
+            }
+        }
+    }
+
+    // Character이 피격되었을 때 호출되는 메소드
+    public void CharacterAttackedTriggered(float damage, Transform enemyPosition)
+    {
+        damageGot += damage; // Accumulate damage
+        rb.AddForce(
+            new Vector2(
+                enemyPosition.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position
+                1.0f // Apply upward force for knockback
+            ) * damageGot, ForceMode2D.Impulse
+        );
+        currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
+    }
+
+    // TestBounceWall에서 호출되는 메소드
+    public void CharacterCollisionTriggered(Collision2D collision, float bounceRate, bool isPlatform = false)
+    {
+        if (currentState != PlayerState.AttackedAndStunned) return;
+        if (isPlatform && beforeSpeed.y > 0.0f) return;
+
+        Debug.Log(beforeSpeed);
+        var velocity = beforeSpeed.magnitude;
+        var direction = Vector2.Reflect(beforeSpeed.normalized, collision.contacts[0].normal);
+        rb.linearVelocity = direction * velocity * bounceRate; // Apply the reflected velocity
     }
 
     // Ground 혹은 Platform에 착지했을 때 호출되는 메소드
     public void CharacterLandedTriggered(Collider2D landedCollider)
     {
-        Debug.Log("rg y Velocity: " + rb.linearVelocity.y);
         if (
                 (currentState == PlayerState.Jumping ||
                 currentState == PlayerState.DoubleJumping ||
