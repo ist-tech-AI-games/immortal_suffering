@@ -16,7 +16,6 @@ class CharacterHit : AHitTrigger
 
     public override void OnHit(float damage, Transform attacker)
     {
-        // Logic to apply damage to the character
         if (characterMovement)
         {
             characterMovement.CharacterAttackedTriggered(damage, attacker);

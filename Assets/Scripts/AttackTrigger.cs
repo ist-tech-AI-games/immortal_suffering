@@ -5,17 +5,20 @@ public class AttackTrigger : MonoBehaviour
 {
     [SerializeField] protected float damage = 10.0f; // Damage dealt by the attack
     [SerializeField] protected bool isTriggeredOnCollisionWithPlayer = true;
+    [SerializeField] protected List<AHitTrigger> inRangeTriggers;
     public virtual void PerformAttack()
     {
-        inRangeTriggers.ForEach(trigger => trigger.OnHit(damage, transform));
+        for (int i = inRangeTriggers.Count - 1; i >= 0; i--)
+        {
+            inRangeTriggers[i].OnHit(damage, transform);
+        }
     }
-    private List<AHitTrigger> inRangeTriggers;
     private void Start()
     {
         inRangeTriggers = new List<AHitTrigger>();
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    public void OnTriggerEnter2D(Collider2D collision)
     {
         var hitTrigger = collision.GetComponent<AHitTrigger>();
         if (hitTrigger != null)
