@@ -1,11 +1,22 @@
 using UnityEngine;
 
+public enum PlayerState
+{
+    Idle,
+    Moving,
+    OnAirMoving,
+    Jumping,
+    DoubleJumping,
+    AttackedAndStunned,
+}
+
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
     [SerializeField] private Collider2D characterCollider; // Assuming you have a Collider for collision detection
-    [SerializeField] private Collider2D onFeetCollider; // Collider for platform detection
+    [SerializeField] private Platform onFeetCollider; // Collider for platform detection
+    [SerializeField] private CharacterAttackSystem characterAttackSystem;
     [Header("State Variables")]
     [SerializeField] private PlayerState currentState = PlayerState.Idle;
     [SerializeField] private int jumpCount = 0; // Flag for jump state
@@ -15,25 +26,19 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private bool isOnEnemy = false; // Flag for ground state
     private Vector2 beforeSpeed; // Used for Wall Bounce
     [SerializeField] private float damageGot = 0.0f;
+    [SerializeField] private float attackAnimationRemainingTime = 0.0f; // Timer for attack animation
+    [SerializeField] private bool attackingFlag = false;
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5.0f;
     [SerializeField] private float moveDelay = 0.3f;
     [SerializeField] private float jumpVelocity = 7.0f;
     [SerializeField] private float doubleJumpVelocity = 5.0f;
-    private enum PlayerState
-    {
-        Idle,
-        Moving,
-        OnAirMoving,
-        Jumping,
-        DoubleJumping,
-        Attacking,
-        AttackedAndStunned,
-    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
+        characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "Enemy" });
 
@@ -52,12 +57,15 @@ public class CharacterMovement : MonoBehaviour
     {
         CharacterLandedTriggered(collision.collider); // Trigger landing event
     }
+
     private LayerMask groundMask;
     private LayerMask enemyMask;
     private RaycastHit2D downwardHit = new RaycastHit2D();
     private void FixedUpdate()
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
+
+        // Raycast 처리
         if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down, Vector2.down, 0.05f, groundMask))
         {
             isOnGroundOrPlatform = true;
@@ -100,6 +108,7 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
+        // 피격 처리
         if (currentState == PlayerState.AttackedAndStunned)
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
@@ -107,6 +116,16 @@ public class CharacterMovement : MonoBehaviour
             if (rb.linearVelocity.magnitude < 0.1f)
             {
                 currentState = PlayerState.Idle; // Reset state to Idle if velocity is low
+            }
+        }
+
+        if (attackAnimationRemainingTime > 0.0f)
+        {
+            attackAnimationRemainingTime -= Time.fixedDeltaTime; // Decrease the attack animation timer
+            if (attackAnimationRemainingTime <= 0.0f)
+            {
+                attackingFlag = false; // Reset the attacking flag
+                characterAttackSystem.EndAttack(); // End the attack animation
             }
         }
     }
@@ -130,7 +149,6 @@ public class CharacterMovement : MonoBehaviour
         if (currentState != PlayerState.AttackedAndStunned) return;
         if (isPlatform && beforeSpeed.y > 0.0f) return;
 
-        Debug.Log(beforeSpeed);
         var velocity = beforeSpeed.magnitude;
         var direction = Vector2.Reflect(beforeSpeed.normalized, collision.contacts[0].normal);
         rb.linearVelocity = direction * velocity * bounceRate; // Apply the reflected velocity
@@ -146,7 +164,7 @@ public class CharacterMovement : MonoBehaviour
             && isOnGroundOrPlatform
             )
         {
-            onFeetCollider = landedCollider;
+            onFeetCollider = landedCollider.GetComponent<Platform>();
             jumpCount = 0; // Reset jump count
             if (remainingMoveTime > 0.0f)
             {
@@ -158,10 +176,12 @@ public class CharacterMovement : MonoBehaviour
             }
         }
     }
-    public void Attack()
+    public void Attack(AttackDirection direction)
     {
-        // Implement attack logic here
+        if (attackingFlag) return; // Prevent multiple attacks at the same time
         
+        attackAnimationRemainingTime = characterAttackSystem.PerformAttack(direction); // Perform attack based on direction
+        attackingFlag = true;
     }
 
     // Character 움직임 처리
@@ -215,7 +235,6 @@ public class CharacterMovement : MonoBehaviour
             // Check if touching platform layer
             if (!characterCollider.IsTouchingLayers(LayerMask.GetMask("Platform")) ||
                 !onFeetCollider ||
-                !onFeetCollider.IsTouchingLayers(LayerMask.GetMask("Character")) ||
                 jumpCount >= 1)
             {
                 return; // Check if touching platform layer
@@ -224,8 +243,7 @@ public class CharacterMovement : MonoBehaviour
             if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
             {
                 jumpCount = 1; // Set jumping flag
-                // Get Platform Layer's Collider2D
-                onFeetCollider.excludeLayers = LayerMask.GetMask("Character"); // Set the collider to trigger to avoid physics issues
+                onFeetCollider.SetExcludeLayers(LayerMask.GetMask("Character"));
                 if (currentState == PlayerState.Idle)
                 {
                     currentState = PlayerState.Jumping; // Set state to Jumping
