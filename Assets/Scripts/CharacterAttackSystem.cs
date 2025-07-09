@@ -14,16 +14,16 @@ public class CharacterAttackSystem : MonoBehaviour
         switch (beforeAttackDirection)
         {
             case AttackDirection.Left:
-                leftAttack.EndAnimation();
+                leftAttack.EndAttack();
                 break;
             case AttackDirection.Right:
-                rightAttack.EndAnimation();
+                rightAttack.EndAttack();
                 break;
             case AttackDirection.Up:
-                upAttack.EndAnimation();
+                upAttack.EndAttack();
                 break;
             case AttackDirection.Down:
-                downAttack.EndAnimation();
+                downAttack.EndAttack();
                 break;
         }
     }
