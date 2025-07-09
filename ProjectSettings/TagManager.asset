@@ -11,6 +11,12 @@ TagManager:
   - 
   - Water
   - UI
+  - Ground
+  - Platform
+  - Wall
+  - Character
+  - Enemy
+  - Projectile
   - 
   - 
   - 
@@ -25,12 +31,6 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - Player
-  - Bomb
-  - 
-  - Arrow
   - 
   - 
   - 

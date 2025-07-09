@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7626863678411113193}
   - component: {fileID: 7573759526901596345}
   - component: {fileID: 6502254767943394451}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: CliffDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetLayer:
     serializedVersion: 2
-    m_Bits: 17
+    m_Bits: 448
   onTargetDetected:
     m_PersistentCalls:
       m_Calls: []
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 2755167862729771719}
   - component: {fileID: 8466797504840642425}
   - component: {fileID: 2614100296183185214}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: WallDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 320
   onTargetDetected:
     m_PersistentCalls:
       m_Calls:
@@ -224,7 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2863962730554600298}
   - component: {fileID: 2209115115991005436}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: Sprite_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +313,7 @@ GameObject:
   - component: {fileID: 7055007604192867015}
   - component: {fileID: 5127105322121491991}
   - component: {fileID: 1853896832057350882}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: BombKid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 8145596914575326163}
   - component: {fileID: 465491482241509007}
   - component: {fileID: 5340267734488334982}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -540,7 +540,7 @@ GameObject:
   - component: {fileID: 4189372063395444760}
   - component: {fileID: 2794038098676196770}
   - component: {fileID: 6034843575082874464}
-  m_Layer: 23
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

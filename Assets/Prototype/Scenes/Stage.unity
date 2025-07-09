@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 11664242}
   - component: {fileID: 11664241}
   - component: {fileID: 11664240}
-  m_Layer: 22
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 282129487}
   - component: {fileID: 282129490}
   - component: {fileID: 282129489}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: OneWayPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -886,7 +886,7 @@ GameObject:
   - component: {fileID: 382283203}
   - component: {fileID: 382283205}
   - component: {fileID: 382283204}
-  m_Layer: 22
+  m_Layer: 9
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1901,7 +1901,7 @@ GameObject:
   - component: {fileID: 2114228679}
   - component: {fileID: 2114228678}
   - component: {fileID: 2114228677}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}

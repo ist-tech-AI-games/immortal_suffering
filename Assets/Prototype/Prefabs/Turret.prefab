@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1646129108734194355}
   - component: {fileID: 4058760020386940925}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: BaseSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4696752436732836068}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 8537140184140481698}
   - component: {fileID: 4647990230749805655}
   - component: {fileID: 4112270633333024462}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 276962049960661670}
   - component: {fileID: 7376091558967939312}
   - component: {fileID: 8024612727486281709}
-  m_Layer: 2
+  m_Layer: 10
   m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,10 +310,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetMask:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 512
   blockingMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 320
   raycastAngle: 7
   angleLimit: {x: -15, y: 195}
   onTargetEnter:
@@ -404,7 +404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4071904895940522984}
   - component: {fileID: 5535133039125680680}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +456,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6067665778961664031}
   - component: {fileID: 3618771728991855705}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CylinderSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
