@@ -4,13 +4,16 @@ using UnityEngine;
 public class AttackTrigger : MonoBehaviour
 {
     [SerializeField] protected float damage = 10.0f; // Damage dealt by the attack
+    [SerializeField] protected float knockbackRatio = 1.0f; // Ratio of knockback applied to the target
     [SerializeField] protected bool isTriggeredOnCollisionWithPlayer = true;
+    [SerializeField] protected LayerMask targetLayer; // Layer mask to specify which layers this trigger interacts with
     [SerializeField] protected List<AHitTrigger> inRangeTriggers;
     public virtual void PerformAttack()
     {
         for (int i = inRangeTriggers.Count - 1; i >= 0; i--)
         {
-            inRangeTriggers[i].OnHit(damage, transform);
+            Debug.Log($"Performing attack on {inRangeTriggers[i].name} with damage: {damage}, knockback ratio: {knockbackRatio}");
+            inRangeTriggers[i].OnHit(damage, knockbackRatio, transform);
         }
     }
     private void Start()
@@ -27,7 +30,7 @@ public class AttackTrigger : MonoBehaviour
             inRangeTriggers.Add(hitTrigger);
         }
 
-        if (isTriggeredOnCollisionWithPlayer && collision.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (isTriggeredOnCollisionWithPlayer && targetLayer == (targetLayer | (1 << collision.gameObject.layer)))
         {
             PerformAttack();
         }

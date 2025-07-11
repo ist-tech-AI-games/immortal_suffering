@@ -4,6 +4,8 @@ public class Platform : MonoBehaviour
 {
     [SerializeField] private Collider2D platformCollider; // Collider for the platform
     [SerializeField] private float remainingTime;
+    [SerializeField] private bool isCharacterDownJumping; // Flag to check if the character is falling
+    public bool IsCharacterFalling => remainingTime > 0.0f; // Property to check if the character is falling
     private void Start()
     {
         platformCollider = GetComponent<Collider2D>();
@@ -15,23 +17,17 @@ public class Platform : MonoBehaviour
         {
             remainingTime -= Time.fixedDeltaTime;
         }
-    }
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        CharacterMovement characterMovement = collision.gameObject.GetComponent<CharacterMovement>();
-        if (characterMovement) {
-            characterMovement.CharacterLandedTriggered(platformCollider); // Set the onFeetCollider to this platform
+        else if (isCharacterDownJumping && remainingTime < 0.0f)
+        {
+            platformCollider.excludeLayers = 0;
+            isCharacterDownJumping = false; // Reset the flag when the time runs out
         }
     }
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        // Clear excludeLayers
-        if (remainingTime <= 0.0f && collision.gameObject.GetComponent<CharacterMovement>()) platformCollider.excludeLayers = 0;
-    }
 
-    public void SetExcludeLayers(int layers)
+    public void SetExcludeLayers()
     {
-        platformCollider.excludeLayers = layers; // Set the excludeLayers to the given layers
-        remainingTime = 0.1f; // Reset the remaining time to 0.1 seconds
+        platformCollider.excludeLayers = LayerMask.GetMask("Character"); // Set the excludeLayers to the given layers
+        remainingTime = 0.2f; // Reset the remaining time to 0.2 seconds
+        isCharacterDownJumping = true; // Set the flag to true
     }
 }

@@ -7,18 +7,15 @@ class CharacterHit : AHitTrigger
 
     private void Start()
     {
-        // Initialize the characterMovement component if not set
-        if (characterMovement == null)
-        {
-            characterMovement = GetComponent<CharacterMovement>();
-        }
+        characterMovement = GetComponent<CharacterMovement>();
     }
 
-    public override void OnHit(float damage, Transform attacker)
+    public override void OnHit(float damage, float knockbackRatio, Transform attacker)
     {
         if (characterMovement)
         {
-            characterMovement.CharacterAttackedTriggered(damage, attacker);
+            Debug.Log($"Character {characterMovement.name} hit by {attacker.name} with damage: {damage}, knockback ratio: {knockbackRatio}");
+            characterMovement.CharacterAttackedTriggered(damage, knockbackRatio, attacker);
         }
     }
 }

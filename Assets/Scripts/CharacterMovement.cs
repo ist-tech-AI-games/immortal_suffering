@@ -15,31 +15,31 @@ public class CharacterMovement : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
     [SerializeField] private Collider2D characterCollider; // Assuming you have a Collider for collision detection
-    [SerializeField] private Platform onFeetCollider; // Collider for platform detection
+    [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
     [Header("State Variables")]
     [SerializeField] private PlayerState currentState = PlayerState.Idle;
-    [SerializeField] private int jumpCount = 0; // Flag for jump state
-    [SerializeField] private float remainingMoveTime = 0.0f; // Timer for movement state
-    [SerializeField] private bool faceIsLeft = false; // Flag for moving left
-    [SerializeField] private bool isOnGroundOrPlatform = false; // Flag for ground state
-    [SerializeField] private bool isOnEnemy = false; // Flag for ground state
+    [SerializeField] private int jumpCount; // Flag for jump state
+    [SerializeField] private float remainingMoveTime; // Timer for movement state
+    [SerializeField] private bool faceIsLeft; // Flag for moving left
+    [SerializeField] private bool isOnGroundOrPlatform; // Flag for ground state
+    [SerializeField] private bool isOnEnemy; // Flag for ground state
     private Vector2 beforeSpeed; // Used for Wall Bounce
-    [SerializeField] private float damageGot = 0.0f;
-    [SerializeField] private float attackAnimationRemainingTime = 0.0f; // Timer for attack animation
-    [SerializeField] private bool attackingFlag = false;
-    [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 5.0f;
-    [SerializeField] private float moveDelay = 0.3f;
-    [SerializeField] private float jumpVelocity = 7.0f;
-    [SerializeField] private float doubleJumpVelocity = 5.0f;
+    [SerializeField] private float damageGot;
+    [SerializeField] private float attackAnimationRemainingTime; // Timer for attack animation
+    [SerializeField] private bool attackingFlag;
+    [Header("Movement Settings - Set these in the Inspector")]
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float moveDelay;
+    [SerializeField] private float jumpVelocity;
+    [SerializeField] private float doubleJumpVelocity;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
         characterAttackSystem = GetComponent<CharacterAttackSystem>();
-        groundMask = LayerMask.GetMask(new string[] { "Ground", "Platform" });
+        groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "Enemy" });
 
         //Variable Initialization
@@ -50,23 +50,22 @@ public class CharacterMovement : MonoBehaviour
         faceIsLeft = false; // Start facing right
         isOnGroundOrPlatform = false; // Reset ground state
         isOnEnemy = false; // Reset enemy state
-        onFeetCollider = null; // Reset onFeetCollider
+        onFeetPlatform = null; // Reset onFeetPlatform
         damageGot = 0.0f; // Reset damage taken
-    }
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        CharacterLandedTriggered(collision.collider); // Trigger landing event
+
+        Physics2D.queriesHitTriggers = false; // Disable trigger queries for raycasts
     }
 
     private LayerMask groundMask;
     private LayerMask enemyMask;
     private RaycastHit2D downwardHit = new RaycastHit2D();
+    private RaycastHit2D enemyFeetHit = new RaycastHit2D();
     private void FixedUpdate()
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
-        // Raycast 처리
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down, Vector2.down, 0.05f, groundMask))
+        // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
+        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 0.02f + Vector3.right * 0.6f, Vector2.left, 1.2f, groundMask))
         {
             isOnGroundOrPlatform = true;
         }
@@ -74,7 +73,7 @@ public class CharacterMovement : MonoBehaviour
         {
             isOnGroundOrPlatform = false;
         }
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down, Vector2.down, 0.05f, enemyMask))
+        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 0.02f + Vector3.right * 0.6f, Vector2.left, 1.2f, enemyMask))
         {
             isOnEnemy = true;
         }
@@ -108,6 +107,34 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
+        // 캐릭터 점프 후 착지 처리
+        if ((currentState == PlayerState.Jumping ||
+                currentState == PlayerState.DoubleJumping ||
+                currentState == PlayerState.OnAirMoving)
+            && isOnGroundOrPlatform && rb.linearVelocity.y <= 0.0f
+            )
+        {
+            onFeetPlatform = downwardHit.transform.gameObject.GetComponent<Platform>(); // Check if the raycast hit a platform
+            Debug.Log("Character landed on: " + downwardHit.transform.gameObject.name);
+
+            jumpCount = 0; // Reset jump count
+            if (remainingMoveTime > 0.0f)
+            {
+                currentState = PlayerState.Moving; // Set state to Moving if still moving
+            }
+            else
+            {
+                currentState = PlayerState.Idle; // Reset state to Idle when not moving
+            }
+        }
+
+        // 캐릭터가 있을 때 발 아래 뭐 있는지 처리
+        if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
+        {
+            // onFeetPlatform = downwardHit.transform.gameObject.GetComponent<Platform>(); 
+            // Debug.Log("Chracter is on: " + downwardHit.transform.gameObject.name);
+        }
+
         // 피격 처리
         if (currentState == PlayerState.AttackedAndStunned)
         {
@@ -119,6 +146,7 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
+        // Attack 애니메이션 처리
         if (attackAnimationRemainingTime > 0.0f)
         {
             attackAnimationRemainingTime -= Time.fixedDeltaTime; // Decrease the attack animation timer
@@ -131,14 +159,14 @@ public class CharacterMovement : MonoBehaviour
     }
 
     // Character이 피격되었을 때 호출되는 메소드
-    public void CharacterAttackedTriggered(float damage, Transform enemyPosition)
+    public void CharacterAttackedTriggered(float damage, float knockbackRatio, Transform enemyPosition)
     {
         damageGot += damage; // Accumulate damage
         rb.AddForce(
             new Vector2(
                 enemyPosition.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position
                 1.0f // Apply upward force for knockback
-            ) * damageGot, ForceMode2D.Impulse
+            ) * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
         );
         currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
     }
@@ -154,28 +182,6 @@ public class CharacterMovement : MonoBehaviour
         rb.linearVelocity = direction * velocity * bounceRate; // Apply the reflected velocity
     }
 
-    // Ground 혹은 Platform에 착지했을 때 호출되는 메소드
-    public void CharacterLandedTriggered(Collider2D landedCollider)
-    {
-        if (
-                (currentState == PlayerState.Jumping ||
-                currentState == PlayerState.DoubleJumping ||
-                currentState == PlayerState.OnAirMoving)
-            && isOnGroundOrPlatform
-            )
-        {
-            onFeetCollider = landedCollider.GetComponent<Platform>();
-            jumpCount = 0; // Reset jump count
-            if (remainingMoveTime > 0.0f)
-            {
-                currentState = PlayerState.Moving; // Set state to Moving if still moving
-            }
-            else
-            {
-                currentState = PlayerState.Idle; // Reset state to Idle when not moving
-            }
-        }
-    }
     public void Attack(AttackDirection direction)
     {
         if (attackingFlag) return; // Prevent multiple attacks at the same time
@@ -232,18 +238,11 @@ public class CharacterMovement : MonoBehaviour
         }
         if (moveInput[2]) // S: Down Jump
         {
-            // Check if touching platform layer
-            if (!characterCollider.IsTouchingLayers(LayerMask.GetMask("Platform")) ||
-                !onFeetCollider ||
-                jumpCount >= 1)
-            {
-                return; // Check if touching platform layer
-            }
             // Check if player is in a state that allows down jump
             if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
             {
                 jumpCount = 1; // Set jumping flag
-                onFeetCollider.SetExcludeLayers(LayerMask.GetMask("Character"));
+                onFeetPlatform.SetExcludeLayers();
                 if (currentState == PlayerState.Idle)
                 {
                     currentState = PlayerState.Jumping; // Set state to Jumping

@@ -22,7 +22,7 @@ public class EnemyHitTrigger : AHitTrigger
         OnDestroyed -= callback; // Unregister the callback
     }
 
-    public override void OnHit(float damage, Transform attacker)
+    public override void OnHit(float damage, float knockbackRatio, Transform attacker)
     {
         remainingHealth -= damage;
         if (remainingHealth <= 0)
@@ -32,11 +32,12 @@ public class EnemyHitTrigger : AHitTrigger
         }
     }
 
+    // 캐릭터와 적이 부딪혔을 때 호출되는 메소드, 테스트용
     void OnCollisionEnter2D(Collision2D collision)
     {
         CharacterMovement characterMovement = collision.gameObject.GetComponent<CharacterMovement>();
         if (characterMovement) {
-            characterMovement.CharacterAttackedTriggered(3.0f, transform); // Simulate an attack with 3 damage
+            characterMovement.CharacterAttackedTriggered(3.0f, 1.0f, transform);
         }
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6837769596005609165}
   - component: {fileID: 3747164591918651226}
   - component: {fileID: 4023367434072233093}
+  - component: {fileID: 9149697491362938227}
   m_Layer: 11
   m_Name: Arrow
   m_TagString: Untagged
@@ -75,10 +76,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  collisionType: 2
+  collisionType: -1
   targetMask:
     serializedVersion: 2
-    m_Bits: 832
+    m_Bits: 320
+--- !u!114 &9149697491362938227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671483502318656601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22cacf5ecdb234621b101d5b230b3315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+  knockbackRatio: 1
+  isTriggeredOnCollisionWithPlayer: 1
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  inRangeTriggers: []
 --- !u!1 &7969458484345394154
 GameObject:
   m_ObjectHideFlags: 0

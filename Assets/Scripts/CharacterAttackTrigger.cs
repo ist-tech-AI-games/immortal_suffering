@@ -36,7 +36,7 @@ public class CharacterAttackTrigger : AttackTrigger
         if (isAttacking)
         {
             EnemyHitTrigger enemyHitTrigger = collision.GetComponent<EnemyHitTrigger>();
-            enemyHitTrigger.OnHit(damage, transform);
+            enemyHitTrigger.OnHit(damage, knockbackRatio, transform);
         }
     }
 
