@@ -5,6 +5,7 @@ namespace ImmortalSuffering
 {
     public class AimTarget : MonoBehaviour
     {
+        [SerializeField] private Vector2 targetOffset = Vector2.zero;
         [SerializeField] private UnityEvent<float> onAngleSet;
         private Transform target;
 
@@ -18,7 +19,7 @@ namespace ImmortalSuffering
         {
             if (target == null) return;
 
-            onAngleSet?.Invoke(Vector2.SignedAngle(Vector2.right, target.position - transform.position));
+            onAngleSet?.Invoke(Vector2.SignedAngle(Vector2.right, target.position + (Vector3)targetOffset - transform.position));
         }
 
         public void SetTarget(Transform target)
