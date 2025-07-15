@@ -40,7 +40,7 @@ public class CharacterMovement : MonoBehaviour
         characterCollider = GetComponent<Collider2D>();
         characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
-        enemyMask = LayerMask.GetMask(new string[] { "Enemy" });
+        enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
 
         //Variable Initialization
         rb.linearVelocity = Vector2.zero; // Reset velocity

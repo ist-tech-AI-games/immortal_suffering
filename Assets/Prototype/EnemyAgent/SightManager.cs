@@ -81,6 +81,8 @@ namespace ImmortalSuffering
         // 대상과의 각도가 범위 내인지 검사.
         private bool CheckAngleLimit(Collider2D target)
         {
+            // heuristic: 너무 가까우면 각도를 따지지 않음.
+            if ((target.transform.position - transform.position).sqrMagnitude < .5f * .5f) return true;
             float angle = NormalizeAngle(Vector2.SignedAngle(Vector2.right, target.transform.position - transform.position));
             return (angleLimit.x - angle) * (angleLimit.y - angle) < 0f;
         }

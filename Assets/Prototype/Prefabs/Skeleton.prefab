@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 5547126933535065146}
   - component: {fileID: 8319996260958185690}
   - component: {fileID: 4210910054453821914}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 436726718107671361}
   - component: {fileID: 9076670788170440661}
   - component: {fileID: 2477066609566873899}
-  m_Layer: 2
+  m_Layer: 14
   m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 32768
   blockingMask:
     serializedVersion: 2
     m_Bits: 320
@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 8901732362039272366}
   - component: {fileID: 7254416187373635579}
   - component: {fileID: 933419546943918146}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: WallDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 3897127029990401723}
   - component: {fileID: 6801846843475429956}
   - component: {fileID: 359302156984058418}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: CliffDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
