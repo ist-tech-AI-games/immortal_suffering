@@ -212,6 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e7248de34f858478cfc1d0be2b05a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetOffset: {x: 0, y: 0}
   onAngleSet:
     m_PersistentCalls:
       m_Calls:
@@ -238,7 +239,7 @@ GameObject:
   - component: {fileID: 276962049960661670}
   - component: {fileID: 7376091558967939312}
   - component: {fileID: 8024612727486281709}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 32768
   blockingMask:
     serializedVersion: 2
     m_Bits: 320

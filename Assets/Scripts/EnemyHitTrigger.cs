@@ -1,16 +1,23 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public delegate void WhenEnemyDestroyed(EnemyHitTrigger enemyHitTrigger);
 
 public class EnemyHitTrigger : AHitTrigger
 {
     [SerializeField] private float remainingHealth = 100.0f; // Health of the enemy
+    [SerializeField] private float knockbackMultiplier = 0f;
+    [SerializeField] private UnityEvent<float> onHealthChanged; // Remaining health
+    [SerializeField] private UnityEvent onDied;
 
     private event WhenEnemyDestroyed OnDestroyed;
+    private Rigidbody2D rb2d;
 
     private void Start()
     {
         OnDestroyed = null; // Initialize the OnDestroyed event
+        rb2d = GetComponentInParent<Rigidbody2D>();
+        onHealthChanged?.Invoke(remainingHealth);
     }
 
     public void RegisterOnDestroyed(WhenEnemyDestroyed callback)
@@ -24,11 +31,23 @@ public class EnemyHitTrigger : AHitTrigger
 
     public override void OnHit(float damage, float knockbackRatio, Transform attacker)
     {
+        if (!enabled) return; // 비활성화로 피해 차단 가능.
         remainingHealth -= damage;
+
+        // TODO: Extract knockback logic to somewhere else
+        rb2d?.AddForce(
+            new Vector2(
+                attacker.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position
+                0f // 임시로 수직 넉백 제거
+            ) * knockbackMultiplier * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
+        );
+
+        onHealthChanged?.Invoke(remainingHealth);
         if (remainingHealth <= 0)
         {
             OnDestroyed?.Invoke(this); // Invoke the callback if registered
-            Destroy(gameObject);
+            onDied?.Invoke();  // 사망 애니메이션 대응을 위해 임시 변경.
+            // Destroy(gameObject);
         }
     }
 

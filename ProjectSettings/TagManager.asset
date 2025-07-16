@@ -14,13 +14,13 @@ TagManager:
   - Ground
   - Platform
   - Wall
-  - Character
-  - Enemy
+  - CharacterAtkHit
+  - EnemyAtkHit
   - Projectile
-  - 
-  - 
-  - 
-  - 
+  - CharacterTerrainInteraction
+  - EnemyTerrainInteraction
+  - Sight
+  - SightTarget
   - 
   - 
   - 

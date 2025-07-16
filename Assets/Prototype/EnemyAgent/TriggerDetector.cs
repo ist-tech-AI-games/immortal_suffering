@@ -16,6 +16,7 @@ public class TriggerDetector : MonoBehaviour
         detector = GetComponent<Collider2D>();
         filter = new ContactFilter2D().NoFilter();
         filter.SetLayerMask(targetLayer);
+        filter.useTriggers = true;
     }
 
     private void FixedUpdate()

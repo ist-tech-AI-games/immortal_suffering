@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum PlayerState
 {
@@ -25,7 +26,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private bool isOnGroundOrPlatform; // Flag for ground state
     [SerializeField] private bool isOnEnemy; // Flag for ground state
     private Vector2 beforeSpeed; // Used for Wall Bounce
-    [SerializeField] private float damageGot;
+    [field: SerializeField] public float damageGot { get; private set; }
     [SerializeField] private float attackAnimationRemainingTime; // Timer for attack animation
     [SerializeField] private bool attackingFlag;
     [Header("Movement Settings - Set these in the Inspector")]
@@ -33,6 +34,8 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float moveDelay;
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float doubleJumpVelocity;
+    [Header("Events")]
+    [SerializeField] private UnityEvent<float> onDamageChanged;
 
     private void Start()
     {
@@ -40,7 +43,7 @@ public class CharacterMovement : MonoBehaviour
         characterCollider = GetComponent<Collider2D>();
         characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
-        enemyMask = LayerMask.GetMask(new string[] { "Enemy" });
+        enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
 
         //Variable Initialization
         rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -52,6 +55,7 @@ public class CharacterMovement : MonoBehaviour
         isOnEnemy = false; // Reset enemy state
         onFeetPlatform = null; // Reset onFeetPlatform
         damageGot = 0.0f; // Reset damage taken
+        onDamageChanged?.Invoke(damageGot);
 
         Physics2D.queriesHitTriggers = false; // Disable trigger queries for raycasts
     }
@@ -162,6 +166,7 @@ public class CharacterMovement : MonoBehaviour
     public void CharacterAttackedTriggered(float damage, float knockbackRatio, Transform enemyPosition)
     {
         damageGot += damage; // Accumulate damage
+        onDamageChanged?.Invoke(damageGot);
         rb.AddForce(
             new Vector2(
                 enemyPosition.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position

@@ -97,7 +97,7 @@ MonoBehaviour:
   isTriggeredOnCollisionWithPlayer: 1
   targetLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 1536
   inRangeTriggers: []
 --- !u!1 &7969458484345394154
 GameObject:

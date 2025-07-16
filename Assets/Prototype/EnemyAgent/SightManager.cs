@@ -33,7 +33,9 @@ namespace ImmortalSuffering
             for (int i = 0; i < cnt; i++)
             {
                 var targetCol = detected[i];
-                if (CheckAngleLimit(targetCol) && RaycastTarget(targetCol))
+                bool a = CheckAngleLimit(targetCol), r = RaycastTarget(targetCol);
+                // if (CheckAngleLimit(targetCol) && RaycastTarget(targetCol))
+                if (a && r)
                 {
                     Transform target = targetCol.transform;
                     currentVisible.Add(target);
@@ -46,6 +48,11 @@ namespace ImmortalSuffering
 
                     Debug.DrawLine(transform.position, target.position, Color.green);
                 }
+                else
+                    if (a) Debug.DrawLine(transform.position, targetCol.transform.position, Color.blue);
+                else if (r) 
+                     Debug.DrawLine(transform.position, targetCol.transform.position, Color.yellow);
+                     else Debug.DrawLine(transform.position, targetCol.transform.position, Color.red);
             }
 
             // 나간 대상들
@@ -68,10 +75,15 @@ namespace ImmortalSuffering
             return null;
         }
 
+        // 현재는 transform.right를 기준으로 삼으므로, -90 ~ 270도 사이의 범위로 각도를 조정.
+        private float NormalizeAngle(float angle) => ((((angle + 90f) % 360f) + 360f) % 360f) - 90f;
+
         // 대상과의 각도가 범위 내인지 검사.
         private bool CheckAngleLimit(Collider2D target)
         {
-            float angle = Vector2.SignedAngle(Vector2.right, target.transform.position - transform.position);
+            // heuristic: 너무 가까우면 각도를 따지지 않음.
+            if ((target.transform.position - transform.position).sqrMagnitude < .5f * .5f) return true;
+            float angle = NormalizeAngle(Vector2.SignedAngle(Vector2.right, target.transform.position - transform.position));
             return (angleLimit.x - angle) * (angleLimit.y - angle) < 0f;
         }
 

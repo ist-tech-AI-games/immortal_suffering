@@ -26,7 +26,7 @@ public class Platform : MonoBehaviour
 
     public void SetExcludeLayers()
     {
-        platformCollider.excludeLayers = LayerMask.GetMask("Character"); // Set the excludeLayers to the given layers
+        platformCollider.excludeLayers = LayerMask.GetMask("CharacterTerrainInteraction"); // Set the excludeLayers to the given layers
         remainingTime = 0.2f; // Reset the remaining time to 0.2 seconds
         isCharacterDownJumping = true; // Set the flag to true
     }
