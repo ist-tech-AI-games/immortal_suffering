@@ -68,8 +68,9 @@ public class CharacterMovement : MonoBehaviour
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
+        Debug.DrawRay(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
         // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 0.02f + Vector3.right * 0.6f, Vector2.left, 1.2f, groundMask))
+        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
             isOnGroundOrPlatform = true;
         }
@@ -77,7 +78,7 @@ public class CharacterMovement : MonoBehaviour
         {
             isOnGroundOrPlatform = false;
         }
-        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 0.02f + Vector3.right * 0.6f, Vector2.left, 1.2f, enemyMask))
+        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
         {
             isOnEnemy = true;
         }

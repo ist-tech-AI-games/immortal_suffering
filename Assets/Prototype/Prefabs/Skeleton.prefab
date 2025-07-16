@@ -940,6 +940,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: HP_HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 1891208760164582409, guid: b5929a56a39406a49a8acf71d31d0f49, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224474825324543622, guid: b5929a56a39406a49a8acf71d31d0f49, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7175233879770444238, guid: b5929a56a39406a49a8acf71d31d0f49, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1024,6 +1032,14 @@ PrefabInstance:
       propertyPath: source
       value: 
       objectReference: {fileID: 1649340364503998589}
+    - target: {fileID: 7772322020402935550, guid: b5929a56a39406a49a8acf71d31d0f49, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900550484604882189, guid: b5929a56a39406a49a8acf71d31d0f49, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
