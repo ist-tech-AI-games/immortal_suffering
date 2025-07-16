@@ -12,5 +12,12 @@ namespace ImmortalSuffering
         public Transform Target { get; set; }
         [field: SerializeField]
         public bool FacingRight { get; set; }
+
+        // TODO: Scene에 종속된 플레이어 참조를 얻기 위한 임시 방편. 나중에 반드시 수정할 것.
+        void Awake()
+        {
+            if (Target == null)
+                Target = GameObject.FindWithTag("Player").transform;
+        }
     }
 }
