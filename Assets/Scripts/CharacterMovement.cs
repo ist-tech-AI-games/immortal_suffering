@@ -19,7 +19,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
     [Header("State Variables")]
-    [SerializeField] private PlayerState currentState = PlayerState.Idle;
+    [field: SerializeField] public PlayerState currentState { get; private set; } = PlayerState.Idle;
     [SerializeField] private int jumpCount; // Flag for jump state
     [SerializeField] private float remainingMoveTime; // Timer for movement state
     [SerializeField] private bool faceIsLeft; // Flag for moving left
@@ -30,10 +30,10 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float attackAnimationRemainingTime; // Timer for attack animation
     [SerializeField] private bool attackingFlag;
     [Header("Movement Settings - Set these in the Inspector")]
-    [SerializeField] private float moveSpeed;
     [SerializeField] private float moveDelay;
-    [SerializeField] private float jumpVelocity;
-    [SerializeField] private float doubleJumpVelocity;
+    [field: SerializeField] public float moveSpeed { get; set; }
+    [field: SerializeField] public float jumpVelocity { get; set; }
+    [field: SerializeField] public float doubleJumpVelocity { get; set; }
     [Header("Events")]
     [SerializeField] private UnityEvent<float> onDamageChanged;
 
@@ -174,7 +174,8 @@ public class CharacterMovement : MonoBehaviour
                 1.0f // Apply upward force for knockback
             ) * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
         );
-        currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
+        if (knockbackRatio > .02f)
+            currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
     }
 
     // TestBounceWall에서 호출되는 메소드
@@ -248,7 +249,8 @@ public class CharacterMovement : MonoBehaviour
             if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
             {
                 jumpCount = 1; // Set jumping flag
-                onFeetPlatform.SetExcludeLayers();
+                if (downwardHit.transform.TryGetComponent(out onFeetPlatform))
+                    onFeetPlatform.SetExcludeLayers();
                 if (currentState == PlayerState.Idle)
                 {
                     currentState = PlayerState.Jumping; // Set state to Jumping

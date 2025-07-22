@@ -21,7 +21,7 @@ public class InfoHandler : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.Log("FixedUpdate called. Time.deltaTime: " + Time.fixedTime);
+        // Debug.Log("FixedUpdate called. Time.deltaTime: " + Time.fixedTime);
         AsyncGPUReadback.Request(entireScreenTexture, 0, OnCompleteReadback);
     }
 

@@ -7,11 +7,14 @@ public class EnemyHitTrigger : AHitTrigger
 {
     [SerializeField] private float remainingHealth = 100.0f; // Health of the enemy
     [SerializeField] private float knockbackMultiplier = 0f;
+    [SerializeField] private float invincibleTime = 0.4f; // 피격 직후 무적 시간
+    [SerializeField] private float minAcceptableDamage = 0f; // 이 미만 피해량 무시. 피해 유형 없이 구현하는 임시방편.
     [SerializeField] private UnityEvent<float> onHealthChanged; // Remaining health
     [SerializeField] private UnityEvent onDied;
 
     private event WhenEnemyDestroyed OnDestroyed;
     private Rigidbody2D rb2d;
+    private float lastHit = 0f;
 
     private void Start()
     {
@@ -31,7 +34,9 @@ public class EnemyHitTrigger : AHitTrigger
 
     public override void OnHit(float damage, float knockbackRatio, Transform attacker)
     {
-        if (!enabled) return; // 비활성화로 피해 차단 가능.
+        if (!enabled                                 // 비활성화로 피해 차단 가능.
+            || Time.time - lastHit < invincibleTime
+            || damage < minAcceptableDamage) return; 
         remainingHealth -= damage;
 
         // TODO: Extract knockback logic to somewhere else
@@ -42,6 +47,7 @@ public class EnemyHitTrigger : AHitTrigger
             ) * knockbackMultiplier * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
         );
 
+        lastHit = Time.time;
         onHealthChanged?.Invoke(remainingHealth);
         if (remainingHealth <= 0)
         {

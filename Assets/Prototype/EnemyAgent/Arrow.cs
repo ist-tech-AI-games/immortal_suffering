@@ -18,6 +18,9 @@ namespace ImmortalSuffering
         [SerializeField]
         private LayerMask targetMask;
 
+        [SerializeField]
+        private Behaviour[] enabledAfterShoot;
+
 
         private Rigidbody2D rb2d;
 
@@ -43,7 +46,7 @@ namespace ImmortalSuffering
             if (arrowState != ArrowState.Shoot) return;
             if ((collisionType & CollisionType.Collision) != 0
                 && (targetMask & (1 << collision.gameObject.layer)) != 0)
-                Destroy(gameObject);
+                DestroyArrow();
         }
 
         void OnTriggerEnter2D(Collider2D collision)
@@ -52,12 +55,20 @@ namespace ImmortalSuffering
             if (enabled
                 && (collisionType & CollisionType.Trigger) != 0
                 && (targetMask & (1 << collision.gameObject.layer)) != 0)
-                Destroy(gameObject);
+                DestroyArrow();
         }
 
         public void Shoot()
         {
             arrowState = ArrowState.Shoot;
+            for (int i = 0; i < enabledAfterShoot.Length; i++)
+                enabledAfterShoot[i].enabled = true;
+        }
+
+        // 필요에 따라 구현 변경 가능
+        public void DestroyArrow()
+        {
+            Destroy(gameObject);
         }
     }
 }

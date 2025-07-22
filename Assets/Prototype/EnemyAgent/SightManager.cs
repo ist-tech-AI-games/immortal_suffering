@@ -12,62 +12,62 @@ namespace ImmortalSuffering
         [SerializeField] private float raycastAngle = 7f; // approx of arcsin(0.7 / 6), in deg.
         [SerializeField] private Vector2 angleLimit = new Vector2(-15f, 195f);
         [SerializeField] private UnityEvent<Transform> onTargetEnter, onTargetExit;
-        private Collider2D sightCollider;
-        private ContactFilter2D targetFilter;
         private HashSet<Transform> visibleTargets = new();
 
-        void Start()
+        private bool IsInTargetLayer(Component other) => ((1 << other.gameObject.layer) & targetMask) != 0;
+
+        void OnTriggerEnter2D(Collider2D other)
         {
-            sightCollider = GetComponent<Collider2D>();
-            targetFilter = new ContactFilter2D().NoFilter();
-            targetFilter.SetLayerMask(targetMask);
+            if (!IsInTargetLayer(other)) return;
+
+            if (CheckAngleLimit(other) && RaycastTarget(other))
+            {
+                Transform target = other.transform;
+                if (!visibleTargets.Contains(target))
+                {
+                    visibleTargets.Add(target);
+                    onTargetEnter?.Invoke(target);
+                }
+                Debug.DrawLine(transform.position, target.position, Color.green);
+            }
         }
 
-        void FixedUpdate()
+        void OnTriggerStay2D(Collider2D other)
         {
-            HashSet<Transform> currentVisible = new();
+            if (!IsInTargetLayer(other)) return;
 
-            Collider2D[] detected = new Collider2D[4];
-            int cnt = Physics2D.OverlapCollider(sightCollider, targetFilter, detected);
+            Transform target = other.transform;
 
-            for (int i = 0; i < cnt; i++)
+            if (CheckAngleLimit(other) && RaycastTarget(other))
             {
-                var targetCol = detected[i];
-                bool a = CheckAngleLimit(targetCol), r = RaycastTarget(targetCol);
-                // if (CheckAngleLimit(targetCol) && RaycastTarget(targetCol))
-                if (a && r)
+                if (!visibleTargets.Contains(target))
                 {
-                    Transform target = targetCol.transform;
-                    currentVisible.Add(target);
-
-                    // 새로 들어온 대상
-                    if (!visibleTargets.Contains(target))
-                    {
-                        onTargetEnter?.Invoke(target);
-                    }
-
-                    Debug.DrawLine(transform.position, target.position, Color.green);
+                    visibleTargets.Add(target);
+                    onTargetEnter?.Invoke(target);
                 }
-                else
-                    if (a) Debug.DrawLine(transform.position, targetCol.transform.position, Color.blue);
-                else if (r) 
-                     Debug.DrawLine(transform.position, targetCol.transform.position, Color.yellow);
-                     else Debug.DrawLine(transform.position, targetCol.transform.position, Color.red);
+                Debug.DrawLine(transform.position, target.position, Color.green);
             }
-
-            // 나간 대상들
-            foreach (var target in visibleTargets)
+            else if (visibleTargets.Contains(target))
             {
-                if (!currentVisible.Contains(target))
-                {
-                    onTargetExit?.Invoke(target);
-                }
-            }
+                visibleTargets.Remove(target);
+                onTargetExit?.Invoke(target);
 
-            visibleTargets = currentVisible;
+                Debug.DrawLine(transform.position, target.position, Color.red);
+            }
         }
 
-        // 요청 시 Physics2D로 감지 vs OnCollisionStay2D 중 성능 부담이 적은 걸 고민하다 전자를 채택.
+        void OnTriggerExit2D(Collider2D other)
+        {
+            if (!IsInTargetLayer(other)) return;
+
+            Transform target = other.transform;
+            if (visibleTargets.Contains(target))
+            {
+                visibleTargets.Remove(target);
+                onTargetExit?.Invoke(target);
+            }
+        }
+
         public Transform TryGetTarget()
         {
             foreach (var target in visibleTargets)

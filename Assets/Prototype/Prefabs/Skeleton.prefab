@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5573165614622512479}
   - component: {fileID: 8027746843803796671}
   - component: {fileID: 3568795642442781470}
+  - component: {fileID: 3215262561713657063}
   m_Layer: 10
   m_Name: GrabArea
   m_TagString: Untagged
@@ -105,18 +106,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1649340364503998589}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onGrabReleased:
     m_PersistentCalls:
       m_Calls:
@@ -132,18 +121,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1649340364503998589}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!114 &3568795642442781470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +134,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paramName: Grabbed
+--- !u!114 &3215262561713657063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909488022508779636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 906ca0696ce59454c9b1096acfeaf855, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 512
+  dmgPerHit:
+    Damage: 5
+    KnockbackRatio: 0
+  firstDmg:
+    Damage: 5
+    KnockbackRatio: 0
+  fixedFramePerHit: 2
+  damagePeriod: 0.8
 --- !u!1 &1896221564848611674
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,6 +297,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remainingHealth: 100
   knockbackMultiplier: 0
+  invincibleTime: 0.4
+  minAcceptableDamage: 0
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -561,6 +563,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onAllTargetLeaved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &933419546943918146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,6 +680,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   onTargetLeaved:
+    m_PersistentCalls:
+      m_Calls: []
+  onAllTargetLeaved:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 359302156984058418}
@@ -886,6 +894,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remainingHealth: 20
   knockbackMultiplier: 20
+  invincibleTime: 0.4
+  minAcceptableDamage: 0
   onHealthChanged:
     m_PersistentCalls:
       m_Calls:
@@ -905,6 +915,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: EnemyHpUI, Assembly-CSharp
         m_MethodName: OnHealthChanged
         m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Hit
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8027746843803796671}
+        m_TargetAssemblyTypeName: ImmortalSuffering.GrabAgent, Assembly-CSharp
+        m_MethodName: TryRelease
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

@@ -39,7 +39,7 @@ namespace ImmortalSuffering
             int cnt = Physics2D.OverlapCollider(grabTrigger, contactFilter, detectedColliders);
             for (int i = 0; i < cnt; i++)
             {
-                if (!Grab(detectedColliders[i].transform)) break;
+                if (Grab(detectedColliders[i].transform)) break;
             }
         }
 

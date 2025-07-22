@@ -4,8 +4,10 @@ using UnityEngine.Events;
 class CharacterHit : AHitTrigger
 {
     [SerializeField] private CharacterMovement characterMovement; // Reference to the CharacterMovement component
+    [SerializeField] private float invincibleTime = .8f; // 피격 직후 무적 시간.
     // TODO: 확장성을 위해, 적절한 인수를 추가할 것. 구조체를 만드는 것도 좋을 듯.
     [SerializeField] private UnityEvent onHit;
+    private float lastHit = 0f;
 
     private void Start()
     {
@@ -14,10 +16,11 @@ class CharacterHit : AHitTrigger
 
     public override void OnHit(float damage, float knockbackRatio, Transform attacker)
     {
-        if (characterMovement)
+        if (characterMovement && Time.time - lastHit > invincibleTime)
         {
             Debug.Log($"Character {characterMovement.name} hit by {attacker.name} with damage: {damage}, knockback ratio: {knockbackRatio}");
             characterMovement.CharacterAttackedTriggered(damage, knockbackRatio, attacker);
+            lastHit = Time.time;
             onHit?.Invoke();
         }
     }

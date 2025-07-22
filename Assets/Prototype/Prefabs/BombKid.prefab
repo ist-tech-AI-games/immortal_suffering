@@ -102,6 +102,9 @@ MonoBehaviour:
         m_CallState: 2
   onTargetLeaved:
     m_PersistentCalls:
+      m_Calls: []
+  onAllTargetLeaved:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1606075112790662755}
         m_TargetAssemblyTypeName: ImmortalSuffering.AnimatorParameterSetter, Assembly-CSharp
@@ -253,6 +256,9 @@ MonoBehaviour:
           m_StringArgument: Turn
           m_BoolArgument: 0
         m_CallState: 2
+  onAllTargetLeaved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6548458591141730130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,7 +371,7 @@ GameObject:
   - component: {fileID: 7055007604192867015}
   - component: {fileID: 5127105322121491991}
   - component: {fileID: 1515063978590711924}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: BombKid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,7 +601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetMask:
     serializedVersion: 2
-    m_Bits: 3584
+    m_Bits: 1536
   blockingMask:
     serializedVersion: 2
     m_Bits: 320
@@ -613,7 +619,7 @@ GameObject:
   - component: {fileID: 6260804526141130545}
   - component: {fileID: 6637193442160720161}
   - component: {fileID: 5425042500553710275}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: ExplodeTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -702,6 +708,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   onTargetLeaved:
+    m_PersistentCalls:
+      m_Calls: []
+  onAllTargetLeaved:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7938119642786257777

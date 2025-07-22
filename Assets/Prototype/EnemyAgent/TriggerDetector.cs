@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,33 +8,26 @@ public class TriggerDetector : MonoBehaviour
     [SerializeField] private LayerMask targetLayer;
     [SerializeField] private UnityEvent onTargetDetected;
     [SerializeField] private UnityEvent onTargetLeaved;
-    private Collider2D detector;
-    private int detectedCnt = 0;
-    private ContactFilter2D filter;
-    private Collider2D[] results = new Collider2D[8];
+    [SerializeField] private UnityEvent onAllTargetLeaved;
+    private HashSet<Collider2D> overlappingTriggers = new();
 
-    void Start()
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        detector = GetComponent<Collider2D>();
-        filter = new ContactFilter2D().NoFilter();
-        filter.SetLayerMask(targetLayer);
-        filter.useTriggers = true;
-    }
-
-    private void FixedUpdate()
-    {
-        int currentDetected = Physics2D.OverlapCollider(detector, filter, results);
-
-        if (detectedCnt == 0 && currentDetected > 0)
+        if ((targetLayer & (1 << collision.gameObject.layer)) != 0)
         {
             onTargetDetected?.Invoke();
+            overlappingTriggers.Add(collision);
         }
+    }
 
-        if (detectedCnt > 0 && currentDetected == 0)
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if ((targetLayer & (1 << collision.gameObject.layer)) != 0)
         {
             onTargetLeaved?.Invoke();
+            overlappingTriggers.Remove(collision);
+            if (!overlappingTriggers.Any())
+                onAllTargetLeaved?.Invoke();
         }
-
-        detectedCnt = currentDetected;
     }
 }

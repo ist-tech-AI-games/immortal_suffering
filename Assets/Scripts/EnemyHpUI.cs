@@ -16,7 +16,7 @@ public class EnemyHpUI : MonoBehaviour
         if (maxHealth < 0f) // not initialized yet
             maxHealth = remainingHealth;
 
-        textComp.SetText(placeholder, remainingHealth, maxHealth);
+        textComp.SetText(placeholder, Mathf.Max(0f, remainingHealth), maxHealth);
         float progress = Mathf.Clamp01(remainingHealth / maxHealth);
         slider.color = colorOverHp.Evaluate(progress);
         slider.fillAmount = progress;
