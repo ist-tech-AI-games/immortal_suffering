@@ -144,7 +144,7 @@ public class CharacterMovement : MonoBehaviour
         if (currentState == PlayerState.AttackedAndStunned)
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
-            rb.linearVelocity *= 0.99f; // Apply a slight damping effect to the velocity
+            rb.linearVelocity *= 0.9f; // Apply a slight damping effect to the velocity
             if (rb.linearVelocity.magnitude < 0.5f)
             {
                 rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -171,9 +171,9 @@ public class CharacterMovement : MonoBehaviour
         onDamageChanged?.Invoke(damageGot);
         rb.AddForce(
             new Vector2(
-                enemyPosition.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position
-                1.0f // Apply upward force for knockback
-            ) * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
+                transform.position.x - enemyPosition.position.x, // Determine knockback direction based on enemy position
+                transform.position.y - enemyPosition.position.y
+            ).normalized * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
         );
         if (knockbackRatio > .02f)
             currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
