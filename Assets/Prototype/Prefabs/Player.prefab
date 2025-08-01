@@ -878,7 +878,7 @@ MonoBehaviour:
   <damageGot>k__BackingField: 0
   attackAnimationRemainingTime: 0
   attackingFlag: 0
-  moveDelay: 0.3
+  moveDelay: 0.2
   <moveSpeed>k__BackingField: 20
   <jumpVelocity>k__BackingField: 30
   <doubleJumpVelocity>k__BackingField: 25

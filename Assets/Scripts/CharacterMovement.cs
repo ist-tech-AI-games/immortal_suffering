@@ -145,8 +145,9 @@ public class CharacterMovement : MonoBehaviour
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
             rb.linearVelocity *= 0.99f; // Apply a slight damping effect to the velocity
-            if (rb.linearVelocity.magnitude < 0.1f)
+            if (rb.linearVelocity.magnitude < 0.5f)
             {
+                rb.linearVelocity = Vector2.zero; // Reset velocity
                 currentState = PlayerState.Idle; // Reset state to Idle if velocity is low
             }
         }

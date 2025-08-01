@@ -125,7 +125,7 @@ public class PlayerInput : MonoBehaviour
         if (isUserInputed)
         {
             isUserInputed = false;
-            moveInput = new bool[8] { false, false, false, false, false, false, false, false };
+            moveInput = new bool[8] { false, filteredA, false, filteredD, false, false, false, false };
         }
     }
 }
