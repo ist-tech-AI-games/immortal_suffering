@@ -46,10 +46,9 @@ namespace ImmortalSuffering
 
         private bool Grab(Transform target)
         {
-            if (!target.TryGetComponent(out Grabbable grabbable))
+            if (!target.TryGetComponent(out Grabbable grabbable) || !grabbable.Grab(this, OnRelease, evict: true))
                 return false;
 
-            grabbable.EvictAndGrab(this, OnRelease);
             currentGrabbing = grabbable;
 
             constraint.SetSources(new List<ConstraintSource>() {new ConstraintSource() {sourceTransform = target, weight = 1f}});
