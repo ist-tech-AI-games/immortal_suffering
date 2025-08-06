@@ -131,7 +131,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 1
+  m_ExitTime: 0.1
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
   srcDirMode: 2
   dstDirMode: 2
   paramName: 
-  animateRotation: 1
+  rotationControlMode: 2
   rightRotation: 180
   leftRotation: 0
 --- !u!1107 &-3029458049958480209
@@ -552,7 +552,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Turn 0
-  m_Speed: 4
+  m_Speed: 8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4000638317039182760}
@@ -612,7 +612,7 @@ MonoBehaviour:
   srcDirMode: 2
   dstDirMode: 2
   paramName: 
-  animateRotation: 1
+  rotationControlMode: 2
   rightRotation: 180
   leftRotation: 0
 --- !u!1102 &2898296913726533032
@@ -740,7 +740,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Turn
-  m_Speed: 4
+  m_Speed: 8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -5611600750062915007}
