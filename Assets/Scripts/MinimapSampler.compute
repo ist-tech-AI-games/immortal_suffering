@@ -1,6 +1,10 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
+struct ColorMapEntry {
+    int ID; float4 Color;
+};
+
 RWStructuredBuffer<int> Result;
 RWTexture2D<float4> DebugTex;  // Must have Width * Height size;
 Texture2D<float4> SourceTex;
@@ -8,11 +12,14 @@ SamplerState samplerSourceTex;
 
 static const int COLORMAXCOUNT = 16;
 int ColorCount;
-int ColorIDs[COLORMAXCOUNT];
+// int ColorIDs[COLORMAXCOUNT];
 int FallbackColorID = -1;
 float CompareThreshold = 0.2;
-float4 ColorValues[COLORMAXCOUNT];
+float AlphaThreshold = 0.5;
+// float4 ColorValues[COLORMAXCOUNT];
 float4 FallBackColor = float4(0, 0, 0, 0);
+
+StructuredBuffer<ColorMapEntry> ColorMap;
 
 int Width; int Height;
 
@@ -32,24 +39,24 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     int colorId = FallbackColorID;
     for (int i = 0; i < ColorCount; i++)
     {
-        float4 diff = color - ColorValues[i];
-        if (dot(diff, diff) < CompareThreshold)
+        float3 diff = color.xyz - ColorMap[i].Color.xyz;
+        if (color.w >= AlphaThreshold && dot(diff, diff) < CompareThreshold)
         {
-            colorId = ColorIDs[i];
+            colorId = ColorMap[i].ID;
             break;
         }
     }
 
-    Result[resultInd.y * Width + resultInd.x] = colorId;
+    Result[(Height - resultInd.y) * Width + resultInd.x] = colorId;
 
     // ----- debug -----
 
     float4 matchedColor = FallBackColor;
     for (int j = 0; j < ColorCount; j++)
     {
-        if (ColorIDs[j] == colorId)
+        if (ColorMap[j].ID == colorId)
         {
-            matchedColor = ColorValues[j];
+            matchedColor = ColorMap[j].Color;
             break;
         }
     }

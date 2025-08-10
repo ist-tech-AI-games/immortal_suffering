@@ -5254,7 +5254,8 @@ MonoBehaviour:
     Id: 0
     Color: {r: 0, g: 0, b: 0, a: 0}
   sampleSize: {x: 160, y: 90}
-  compareThreshold: 0.2
+  compareThreshold: 0.1
+  alphaThreshold: 0.5
   rawImage: {fileID: 183434938}
   debugTexture: {fileID: 0}
   result: 
