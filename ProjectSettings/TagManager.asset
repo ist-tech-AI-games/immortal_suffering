@@ -21,7 +21,7 @@ TagManager:
   - EnemyTerrainInteraction
   - Sight
   - SightTarget
-  - 
+  - MinimapElement
   - 
   - 
   - 
@@ -40,6 +40,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: MinimapElement
+    uniqueID: 1445739141
     locked: 0
   - name: Wall
     uniqueID: 3090358417
