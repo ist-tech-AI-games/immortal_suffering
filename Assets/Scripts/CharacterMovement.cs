@@ -1,3 +1,4 @@
+using ImmortalSuffering;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,6 +12,13 @@ public enum PlayerState
     AttackedAndStunned,
 }
 
+public enum MoveStatus
+{
+    IDLE = 0,
+    WALKING = 1,
+    ONAIR = 2,
+    STUNNED = 3
+}
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
@@ -19,7 +27,34 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
     [Header("State Variables")]
-    [field: SerializeField] public PlayerState currentState { get; private set; } = PlayerState.Idle;
+    [SerializeField] private PlayerState _currentState; // Current state of the character
+    public PlayerState currentState
+    {
+        get
+        {
+            return _currentState;
+        }
+        private set
+        {
+            _currentState = value;
+            switch (value)
+            {
+                case PlayerState.Idle:
+                    return;
+                case PlayerState.Moving:
+                    return;
+                case PlayerState.OnAirMoving:
+                    return;
+                case PlayerState.Jumping:
+                    return;
+                case PlayerState.DoubleJumping:
+                    return;
+                case PlayerState.AttackedAndStunned:
+                    return;
+            }
+        }
+    }
+    [SerializeField] private AnimatorParameterSetter animatorParameterSetter; // Animator parameter setter for state changes
     [SerializeField] private int jumpCount; // Flag for jump state
     [SerializeField] private float remainingMoveTime; // Timer for movement state
     [SerializeField] private bool faceIsLeft; // Flag for moving left
@@ -68,9 +103,9 @@ public class CharacterMovement : MonoBehaviour
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
-        Debug.DrawRay(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
+        Debug.DrawRay(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
         // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
+        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
             isOnGroundOrPlatform = true;
         }
@@ -78,7 +113,7 @@ public class CharacterMovement : MonoBehaviour
         {
             isOnGroundOrPlatform = false;
         }
-        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
+        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
         {
             isOnEnemy = true;
         }
@@ -193,7 +228,7 @@ public class CharacterMovement : MonoBehaviour
     public void Attack(AttackDirection direction)
     {
         if (attackingFlag) return; // Prevent multiple attacks at the same time
-        
+
         attackAnimationRemainingTime = characterAttackSystem.PerformAttack(direction); // Perform attack based on direction
         attackingFlag = true;
     }
