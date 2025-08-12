@@ -1,4 +1,6 @@
 using ImmortalSuffering;
+using Unity.Mathematics;
+using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,7 +17,7 @@ public enum PlayerState
 public enum MoveStatus
 {
     IDLE = 0,
-    WALKING = 1,
+    Moving = 1,
     ONAIR = 2,
     STUNNED = 3
 }
@@ -37,27 +39,38 @@ public class CharacterMovement : MonoBehaviour
         private set
         {
             _currentState = value;
+            charSpriteRenderer.flipX = !faceIsLeft;
             switch (value)
             {
                 case PlayerState.Idle:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.IDLE);
                     return;
                 case PlayerState.Moving:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.Moving);
                     return;
                 case PlayerState.OnAirMoving:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.Jumping:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.DoubleJumping:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.AttackedAndStunned:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.STUNNED);
+                    charSpriteRenderer.flipX = faceIsLeft;
                     return;
             }
         }
     }
+
+    [SerializeField] private SpriteRenderer charSpriteRenderer;
     [SerializeField] private AnimatorParameterSetter animatorParameterSetter; // Animator parameter setter for state changes
     [SerializeField] private int jumpCount; // Flag for jump state
     [SerializeField] private float remainingMoveTime; // Timer for movement state
     [SerializeField] private bool faceIsLeft; // Flag for moving left
+    [SerializeField] private bool isGrabbed;
     [SerializeField] private bool isOnGroundOrPlatform; // Flag for ground state
     [SerializeField] private bool isOnEnemy; // Flag for ground state
     private Vector2 beforeSpeed; // Used for Wall Bounce
@@ -103,7 +116,7 @@ public class CharacterMovement : MonoBehaviour
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
-        Debug.DrawRay(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
+        // Debug.DrawRay(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
         // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
         if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
@@ -176,10 +189,10 @@ public class CharacterMovement : MonoBehaviour
         }
 
         // 피격 처리
-        if (currentState == PlayerState.AttackedAndStunned)
+        if (currentState == PlayerState.AttackedAndStunned && !isGrabbed)
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
-            rb.linearVelocity *= 0.9f; // Apply a slight damping effect to the velocity
+            rb.linearVelocity *= 0.95f; // Apply a slight damping effect to the velocity
             if (rb.linearVelocity.magnitude < 0.5f)
             {
                 rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -208,18 +221,34 @@ public class CharacterMovement : MonoBehaviour
             new Vector2(
                 transform.position.x - enemyPosition.position.x, // Determine knockback direction based on enemy position
                 transform.position.y - enemyPosition.position.y
-            ).normalized * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
+            ).normalized * knockbackRatio * math.sqrt(damageGot) * 10 * math.sqrt(2), ForceMode2D.Impulse // Apply knockback force, 200% 일 때 200의 힘이 가해지는 것으로 수치 설정
         );
         if (knockbackRatio > .02f)
             currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
     }
 
+    public void CharacterGrabbedTriggered(bool isGrabbed)
+    {
+        if (isGrabbed)
+        {
+            currentState = PlayerState.AttackedAndStunned;
+            this.isGrabbed = true;
+        }
+        else
+        {
+            this.isGrabbed = false;
+            currentState = PlayerState.Idle;
+        }
+    }
+
+    [SerializeField] private GameObject wallHitParticle;
     // TestBounceWall에서 호출되는 메소드
     public void CharacterCollisionTriggered(Collision2D collision, float bounceRate, bool isPlatform = false)
     {
         if (currentState != PlayerState.AttackedAndStunned) return;
         if (isPlatform && beforeSpeed.y > 0.0f) return;
 
+        Instantiate(wallHitParticle).transform.position = collision.transform.position;
         var velocity = beforeSpeed.magnitude;
         var direction = Vector2.Reflect(beforeSpeed.normalized, collision.contacts[0].normal);
         rb.linearVelocity = direction * velocity * bounceRate; // Apply the reflected velocity
@@ -227,7 +256,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void Attack(AttackDirection direction)
     {
-        if (attackingFlag) return; // Prevent multiple attacks at the same time
+        if (attackingFlag || currentState == PlayerState.AttackedAndStunned) return; // Prevent multiple attacks at the same time
 
         attackAnimationRemainingTime = characterAttackSystem.PerformAttack(direction); // Perform attack based on direction
         attackingFlag = true;
@@ -274,7 +303,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 currentState = PlayerState.OnAirMoving; // Set state to OnAirMoving if jumping
             }
-            else if (currentState == PlayerState.Idle)
+            else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
             {
                 currentState = PlayerState.Moving; // Set state to Moving if idle
             }

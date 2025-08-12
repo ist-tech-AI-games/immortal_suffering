@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 8512190504898886455}
   - component: {fileID: 573362067422905545}
   m_Layer: 12
-  m_Name: Sprite_1
+  m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -601,7 +601,7 @@ Transform:
   m_GameObject: {fileID: 4751985502865202279}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.9386759, y: 1.288702, z: 0.04523675}
+  m_LocalPosition: {x: -1.9386759, y: 1.13, z: 0.04523675}
   m_LocalScale: {x: 3, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -838,7 +838,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.0032310486}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -848,7 +848,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 2.260025}
   m_EdgeRadius: 0
 --- !u!114 &978479391032840891
 MonoBehaviour:
@@ -910,11 +910,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  characterCollider: {fileID: 573362067422905545}
+  characterCollider: {fileID: 1743620305377636931}
   onFeetPlatform: {fileID: 0}
   characterAttackSystem: {fileID: 0}
   _currentState: 0
-  animatorParameterSetter: {fileID: 0}
+  charSpriteRenderer: {fileID: 3052991386596314541}
+  animatorParameterSetter: {fileID: 3227872229190294132}
   jumpCount: 0
   remainingMoveTime: 0
   faceIsLeft: 0
@@ -923,8 +924,8 @@ MonoBehaviour:
   <damageGot>k__BackingField: 0
   attackAnimationRemainingTime: 0
   attackingFlag: 0
-  moveDelay: 0.2
-  <moveSpeed>k__BackingField: 20
+  moveDelay: 0.3
+  <moveSpeed>k__BackingField: 10
   <jumpVelocity>k__BackingField: 30
   <doubleJumpVelocity>k__BackingField: 25
   onDamageChanged:
@@ -942,6 +943,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  wallHitParticle: {fileID: 5904284295379588615, guid: 7960e02dec1033a4aab2306cb751837a, type: 3}
 --- !u!114 &1911371125675674007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1383,7 +1385,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1698799525679916299
 Transform:
   m_ObjectHideFlags: 0
