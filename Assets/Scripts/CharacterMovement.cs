@@ -12,6 +12,7 @@ public enum PlayerState
     Jumping,
     DoubleJumping,
     AttackedAndStunned,
+    Grabbed,
 }
 
 public enum MoveStatus
@@ -28,6 +29,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private Collider2D characterCollider; // Assuming you have a Collider for collision detection
     [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
+    [SerializeField] private ParticleSystem damagedFlyingParticle;
     [Header("State Variables")]
     [SerializeField] private PlayerState _currentState; // Current state of the character
     public PlayerState currentState
@@ -40,6 +42,8 @@ public class CharacterMovement : MonoBehaviour
         {
             _currentState = value;
             charSpriteRenderer.flipX = !faceIsLeft;
+            if(!isGrabbed) charSpriteRenderer.color = Color.white;
+            damagedFlyingParticle.Stop();
             switch (value)
             {
                 case PlayerState.Idle:
@@ -59,7 +63,12 @@ public class CharacterMovement : MonoBehaviour
                     return;
                 case PlayerState.AttackedAndStunned:
                     animatorParameterSetter.SetInteger((int)MoveStatus.STUNNED);
-                    charSpriteRenderer.flipX = faceIsLeft;
+                    charSpriteRenderer.color = Color.red;
+                    damagedFlyingParticle.Play();
+                    return;
+                case PlayerState.Grabbed:
+                    animatorParameterSetter.SetInteger((int)MoveStatus.STUNNED);
+                    charSpriteRenderer.color = Color.magenta;
                     return;
             }
         }
@@ -92,6 +101,8 @@ public class CharacterMovement : MonoBehaviour
         characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
+        damagedFlyingParticle.gameObject.SetActive(true);
+        damagedFlyingParticle.Stop();
 
         //Variable Initialization
         rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -139,7 +150,7 @@ public class CharacterMovement : MonoBehaviour
             (currentState == PlayerState.Moving || currentState == PlayerState.OnAirMoving))
         {
             rb.linearVelocityX =
-                moveSpeed *
+                    (moveSpeed) *
                 (currentState == PlayerState.OnAirMoving ? 0.5f : 1.0f) *
                 (faceIsLeft ? -1.0f : 1.0f) *
                  Mathf.Sin(remainingMoveTime / moveDelay); // Move left or right based on the flag
@@ -153,7 +164,7 @@ public class CharacterMovement : MonoBehaviour
                 {
                     currentState = PlayerState.Jumping;
                 }
-                else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
+                else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving || currentState == PlayerState.Grabbed)
                 {
                     currentState = PlayerState.Idle;
                 }
@@ -192,7 +203,8 @@ public class CharacterMovement : MonoBehaviour
         if (currentState == PlayerState.AttackedAndStunned && !isGrabbed)
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
-            rb.linearVelocity *= 0.95f; // Apply a slight damping effect to the velocity
+            charSpriteRenderer.flipX = beforeSpeed.x < 0;
+            rb.linearVelocity *= 0.92f; // Apply a slight damping effect to the velocity
             if (rb.linearVelocity.magnitude < 0.5f)
             {
                 rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -231,7 +243,7 @@ public class CharacterMovement : MonoBehaviour
     {
         if (isGrabbed)
         {
-            currentState = PlayerState.AttackedAndStunned;
+            currentState = PlayerState.Grabbed;
             this.isGrabbed = true;
         }
         else
@@ -240,15 +252,13 @@ public class CharacterMovement : MonoBehaviour
             currentState = PlayerState.Idle;
         }
     }
-
-    [SerializeField] private GameObject wallHitParticle;
+    
     // TestBounceWall에서 호출되는 메소드
     public void CharacterCollisionTriggered(Collision2D collision, float bounceRate, bool isPlatform = false)
     {
         if (currentState != PlayerState.AttackedAndStunned) return;
         if (isPlatform && beforeSpeed.y > 0.0f) return;
 
-        Instantiate(wallHitParticle).transform.position = collision.transform.position;
         var velocity = beforeSpeed.magnitude;
         var direction = Vector2.Reflect(beforeSpeed.normalized, collision.contacts[0].normal);
         rb.linearVelocity = direction * velocity * bounceRate; // Apply the reflected velocity
@@ -256,7 +266,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void Attack(AttackDirection direction)
     {
-        if (attackingFlag || currentState == PlayerState.AttackedAndStunned) return; // Prevent multiple attacks at the same time
+        if (attackingFlag || currentState == PlayerState.AttackedAndStunned || isGrabbed) return; // Prevent multiple attacks at the same time
 
         attackAnimationRemainingTime = characterAttackSystem.PerformAttack(direction); // Perform attack based on direction
         attackingFlag = true;
@@ -303,7 +313,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 currentState = PlayerState.OnAirMoving; // Set state to OnAirMoving if jumping
             }
-            else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
+            else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving || currentState == PlayerState.Grabbed)
             {
                 currentState = PlayerState.Moving; // Set state to Moving if idle
             }
