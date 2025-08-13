@@ -44,38 +44,39 @@ public class CharacterMovement : MonoBehaviour
             charSpriteRenderer.flipX = !faceIsLeft;
             if(!isGrabbed) charSpriteRenderer.color = Color.white;
             damagedFlyingParticle.Stop();
+            animatorSpeedSetter.SetFloat(isGrabbed ? 0.25f : 1.0f);
             switch (value)
             {
                 case PlayerState.Idle:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.IDLE);
+                    animatorStatusSetter.SetInteger((int)MoveStatus.IDLE);
                     return;
                 case PlayerState.Moving:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.Moving);
+                    animatorStatusSetter.SetInteger((int)MoveStatus.Moving);
                     return;
                 case PlayerState.OnAirMoving:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.Jumping:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.DoubleJumping:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.ONAIR);
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
                     return;
                 case PlayerState.AttackedAndStunned:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.STUNNED);
-                    charSpriteRenderer.color = Color.red;
+                    animatorStatusSetter.SetInteger((int)MoveStatus.STUNNED);
                     damagedFlyingParticle.Play();
                     return;
                 case PlayerState.Grabbed:
-                    animatorParameterSetter.SetInteger((int)MoveStatus.STUNNED);
-                    charSpriteRenderer.color = Color.magenta;
+                    animatorStatusSetter.SetInteger((int)MoveStatus.STUNNED);
+                    charSpriteRenderer.color = Color.red;
                     return;
             }
         }
     }
 
     [SerializeField] private SpriteRenderer charSpriteRenderer;
-    [SerializeField] private AnimatorParameterSetter animatorParameterSetter; // Animator parameter setter for state changes
+    [SerializeField] private AnimatorParameterSetter animatorStatusSetter; // Animator parameter setter for state changes
+    [SerializeField] private AnimatorParameterSetter animatorSpeedSetter; // Animator parameter setter for state changes
     [SerializeField] private int jumpCount; // Flag for jump state
     [SerializeField] private float remainingMoveTime; // Timer for movement state
     [SerializeField] private bool faceIsLeft; // Flag for moving left

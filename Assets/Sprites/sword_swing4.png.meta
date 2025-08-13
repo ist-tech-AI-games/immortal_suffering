@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 3ad95fbf3c16d4fcba005ac7f3dcf118
+guid: d72ab689ecaa56d41bd6bb4446f7a11b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6552209289247107531
-    second: knight_run1_0
+      213: -6903375477026550800
+    second: sword_swing4_0
+  - first:
+      213: -1114812753122259067
+    second: sword_swing4_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: knight_run1_0
+      name: sword_swing4_0
       rect:
         serializedVersion: 2
-        x: 456
-        y: 244
-        width: 1029
-        height: 1019
+        x: 237
+        y: 920
+        width: 61
+        height: 20
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5365964dd50e115a0800000000000000
-      internalID: -6552209289247107531
+      spriteID: 0fb80bc44984230a0800000000000000
+      internalID: -6903375477026550800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sword_swing4_1
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 299
+        width: 1109
+        height: 737
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f821325b36780f0800000000000000
+      internalID: -1114812753122259067
       vertices: []
       indices: 
       edges: []

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3ad95fbf3c16d4fcba005ac7f3dcf118
+guid: 216aa451a53977347ab98b92525ddae1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6552209289247107531
-    second: knight_run1_0
+      213: -9113138450082833874
+    second: knight_knockback_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: knight_run1_0
+      name: knight_knockback_0
       rect:
         serializedVersion: 2
-        x: 456
-        y: 244
-        width: 1029
-        height: 1019
+        x: 347
+        y: 169
+        width: 765
+        height: 1128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5365964dd50e115a0800000000000000
-      internalID: -6552209289247107531
+      spriteID: e2adbd5fcd0a78180800000000000000
+      internalID: -9113138450082833874
       vertices: []
       indices: 
       edges: []
