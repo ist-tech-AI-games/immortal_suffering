@@ -5247,14 +5247,14 @@ MonoBehaviour:
   - Id: 3
     Color: {r: 0.35686275, g: 0.21960784, b: 0.003921569, a: 1}
   - Id: 2
-    Color: {r: 0.3254902, g: 0.29803923, b: 0.3882353, a: 1}
+    Color: {r: 0, g: 0, b: 1, a: 1}
   - Id: 0
     Color: {r: 0, g: 0, b: 0, a: 0}
   fallbackMap:
     Id: 0
     Color: {r: 0, g: 0, b: 0, a: 0}
   sampleSize: {x: 160, y: 90}
-  compareThreshold: 0.1
+  compareThreshold: 0.15
   alphaThreshold: 0.5
   rawImage: {fileID: 183434938}
   debugTexture: {fileID: 0}
@@ -10035,7 +10035,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.32156864, g: 0.29803923, b: 0.3882353, a: 1}
+  m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_Origin: {x: -18, y: -12, z: 0}
   m_Size: {x: 36, y: 24, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
