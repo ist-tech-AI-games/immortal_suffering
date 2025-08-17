@@ -25,8 +25,8 @@ public enum MoveStatus
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
-    [SerializeField] private Collider2D characterCollider; // Assuming you have a Collider for collision detection
+    private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
+    private Collider2D characterCollider; // Assuming you have a Collider for collision detection
     [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
     [SerializeField] private ParticleSystem damagedFlyingParticle;
@@ -99,7 +99,6 @@ public class CharacterMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
-        characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
         damagedFlyingParticle.gameObject.SetActive(true);
@@ -128,9 +127,9 @@ public class CharacterMovement : MonoBehaviour
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
-        // Debug.DrawRay(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
+        Debug.DrawRay(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
         // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
+        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
             isOnGroundOrPlatform = true;
         }
@@ -138,7 +137,7 @@ public class CharacterMovement : MonoBehaviour
         {
             isOnGroundOrPlatform = false;
         }
-        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.25f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
+        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
         {
             isOnEnemy = true;
         }
@@ -308,6 +307,7 @@ public class CharacterMovement : MonoBehaviour
         {
             remainingMoveTime = moveDelay; // Reset move timer
             faceIsLeft = moveInput[1] == true; // Set flag to move left
+            characterAttackSystem.CharFaceLeft = moveInput[1] == true;
             if (currentState == PlayerState.Jumping ||
                 currentState == PlayerState.DoubleJumping ||
                 currentState == PlayerState.OnAirMoving)
