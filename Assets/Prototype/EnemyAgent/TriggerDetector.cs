@@ -11,23 +11,42 @@ public class TriggerDetector : MonoBehaviour
     [SerializeField] private UnityEvent onAllTargetLeaved;
     private HashSet<Collider2D> overlappingTriggers = new();
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private bool MatchLayer(Collider2D collider2D) =>
+        (targetLayer & (1 << collider2D.gameObject.layer)) != 0;
+
+    private void EnterTrigger(Collider2D collider2D)
     {
-        if ((targetLayer & (1 << collision.gameObject.layer)) != 0)
-        {
-            onTargetDetected?.Invoke();
-            overlappingTriggers.Add(collision);
-        }
+        onTargetDetected?.Invoke();
+        overlappingTriggers.Add(collider2D);
     }
 
-    void OnTriggerExit2D(Collider2D collision)
+    private void LeaveTrigger(Collider2D collider2D)
     {
-        if ((targetLayer & (1 << collision.gameObject.layer)) != 0)
-        {
-            onTargetLeaved?.Invoke();
-            overlappingTriggers.Remove(collision);
-            if (!overlappingTriggers.Any())
-                onAllTargetLeaved?.Invoke();
-        }
+        onTargetLeaved?.Invoke();
+        overlappingTriggers.Remove(collider2D);
+        if (!overlappingTriggers.Any())
+            onAllTargetLeaved?.Invoke();
+    }
+
+    void OnTriggerEnter2D(Collider2D collider2D)
+    {
+        if (collider2D.enabled && MatchLayer(collider2D))
+            EnterTrigger(collider2D);
+    }
+
+    void OnTriggerStay2D(Collider2D collider2D)
+    {
+        if (!MatchLayer(collider2D)) return;
+
+        if (collider2D.enabled && !overlappingTriggers.Contains(collider2D))
+            EnterTrigger(collider2D);
+        if (!collider2D.enabled && overlappingTriggers.Contains(collider2D))
+            LeaveTrigger(collider2D);
+    }
+
+    void OnTriggerExit2D(Collider2D collider2D)
+    {
+        if (collider2D.enabled && MatchLayer(collider2D))
+            LeaveTrigger(collider2D);
     }
 }
