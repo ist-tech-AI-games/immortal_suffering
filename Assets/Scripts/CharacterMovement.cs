@@ -307,7 +307,6 @@ public class CharacterMovement : MonoBehaviour
         {
             remainingMoveTime = moveDelay; // Reset move timer
             faceIsLeft = moveInput[1] == true; // Set flag to move left
-            characterAttackSystem.CharFaceLeft = moveInput[1] == true;
             if (currentState == PlayerState.Jumping ||
                 currentState == PlayerState.DoubleJumping ||
                 currentState == PlayerState.OnAirMoving)
