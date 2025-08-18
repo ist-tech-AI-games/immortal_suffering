@@ -56,13 +56,4 @@ public class EnemyHitTrigger : AHitTrigger
             // Destroy(gameObject);
         }
     }
-
-    // 캐릭터와 적이 부딪혔을 때 호출되는 메소드, 테스트용
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        CharacterMovement characterMovement = collision.gameObject.GetComponent<CharacterMovement>();
-        if (characterMovement) {
-            characterMovement.CharacterAttackedTriggered(3.0f, 1.0f, transform);
-        }
-    }
 }

@@ -8,7 +8,8 @@ struct ColorMapEntry {
 RWStructuredBuffer<int> Result;
 RWTexture2D<float4> DebugTex;  // Must have Width * Height size;
 Texture2D<float4> SourceTex;
-SamplerState samplerSourceTex;
+// SamplerState samplerSourceTex;
+SamplerState my_clamp_point_sampler;
 
 static const int COLORMAXCOUNT = 16;
 int ColorCount;
@@ -32,7 +33,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     if (id.x >= srcW || id.y >= srcH) return;
 
     float2 uv = (id.xy + 0.5) / float2(srcW, srcH);
-    float4 color = SourceTex.SampleLevel(samplerSourceTex, uv, 0);
+    float4 color = SourceTex.SampleLevel(my_clamp_point_sampler, uv, 0);
 
     uint2 resultInd = uv * float2(Width, Height) - 0.5;
 
