@@ -1,4 +1,3 @@
-// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
 struct ColorMapEntry {
@@ -9,18 +8,18 @@ RWStructuredBuffer<int> Result;
 RWTexture2D<float4> DebugTex;  // Must have Width * Height size;
 Texture2D<float4> SourceTex;
 
-static const int COLORMAXCOUNT = 16;
-int ColorCount;
+uint Width, Height;
+
 int FallbackColorID = -1;
-float CompareThreshold = 0.2;
-float AlphaThreshold = 0.5;
 float4 FallBackColor = float4(0, 0, 0, 0);
 
+static const int COLORMAXCOUNT = 16;
+int ColorCount;
 StructuredBuffer<ColorMapEntry> ColorMap;
-// RWStructuredBuffer<float4> DebugColorMap;
-// RWStructuredBuffer<float4> DebugFloatArray;
 
-uint Width, Height;
+float CompareThreshold = 0.2;
+float AlphaThreshold = 0.5;
+
 
 float3 gammaToLinear(float3 input)
 {
@@ -30,14 +29,14 @@ float3 gammaToLinear(float3 input)
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    if (id.x >= Width || id.y >= Height) return;
+    
     uint srcW, srcH;
     SourceTex.GetDimensions(srcW, srcH);
 
-    if (id.x >= Width || id.y >= Height) return;
-
     float2 uv = (id.xy + 0.5) / float2(Width, Height);
     uint2 srcInd = uv * float2(srcW, srcH);
-    float4 color = SourceTex[srcInd.xy]; // SourceTex.SampleLevel(my_clamp_point_sampler, uv, 0);
+    float4 color = SourceTex[srcInd.xy];
 
     int colorId = FallbackColorID;
     for (int i = 0; i < ColorCount; i++)
@@ -46,13 +45,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         if (color.w >= AlphaThreshold && dot(diff, diff) < CompareThreshold)
         {
             colorId = ColorMap[i].ID;
-            // if (colorId == 3)
-            // {
-            //     DebugFloatArray[0].xyz = color.xyz;
-            //     DebugFloatArray[1].xyz = ColorMap[i].Color.xyz;
-            //     DebugFloatArray[2].x = dot(diff, diff);
-            //     DebugFloatArray[3].xy = uv;
-            // }
             break;
         }
     }
@@ -71,11 +63,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
             break;
         }
     }
-
-    // for (int k = 0; k < ColorCount; k++)
-    // {
-    //     DebugColorMap[k] = ColorMap[k].Color;
-    // }
 
     DebugTex[id.xy] = matchedColor;
 }
