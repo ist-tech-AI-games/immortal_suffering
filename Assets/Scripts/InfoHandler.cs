@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,13 +23,14 @@ public class InfoHandler : MonoBehaviour
     [SerializeField] private ComputeShader computeShader;
     [SerializeField] private RenderTexture entireScreenTexture; // 전체 화면 텍스처
 
-    [Serializable]
+    [Serializable, StructLayout(LayoutKind.Sequential, Size = 32)]
     public struct ColorMap
     {
         public int Id;
+        [HideInInspector] public Vector3 _Padding;
         public Color Color;
     }
-    const int COLORMAPSTRUCTSIZE = sizeof(int) + 4 * sizeof(float);
+    const int COLORMAPSTRUCTSIZE = 32;
 
     [Tooltip("Mapping of color - id. Warning: max 16 entries.")]
     [SerializeField] private ColorMap[] colorMaps;
@@ -78,6 +80,7 @@ public class InfoHandler : MonoBehaviour
         desc.width = sampleSize.x; desc.height = sampleSize.y;
         desc.enableRandomWrite = true;
         debugTexture = new RenderTexture(desc);
+        debugTexture.filterMode = FilterMode.Point;
 
         if (rawImage != null) rawImage.texture = debugTexture;
         result = new int[sampleSize.x * sampleSize.y];
@@ -127,14 +130,36 @@ public class InfoHandler : MonoBehaviour
         computeShader.SetVector(_FallbackColorID, fallbackMap.Color);
         // computeShader.SetVectorArray(_ColorValuesID, colors);
 
-        Vector2Int threadGroups = Vector2Int.CeilToInt(new Vector2(entireScreenTexture.width, entireScreenTexture.height) / 8f);
+        // ComputeBuffer colorMapDebugCB = new(colorMaps.Length, 16);
+        // computeShader.SetBuffer(kernel, "DebugColorMap", colorMapDebugCB);
+        // ComputeBuffer debugFloatCB = new(4, 16);
+        // computeShader.SetBuffer(kernel, "DebugFloatArray", debugFloatCB);
+
+        // Vector2Int threadGroups = Vector2Int.CeilToInt(new Vector2(entireScreenTexture.width, entireScreenTexture.height) / 8f);
+        Vector2Int threadGroups = Vector2Int.CeilToInt((Vector2)sampleSize / 8f);
         computeShader.Dispatch(kernel, threadGroups.x, threadGroups.y, 1);
 
         resultCB.GetData(resultBuffer);
         resultCB.Release();
 
+        // Vector4[] debugColorMap = new Vector4[colorMaps.Length];
+        // colorMapDebugCB.GetData(debugColorMap);
+        // for (int i = 0; i < debugColorMap.Length; i++)
+        //     Debug.Log($"{i}: {debugColorMap[i]}({ColorUtility.ToHtmlStringRGB(debugColorMap[i])})");
+
+        // Vector4[] debugFloatArray = new Vector4[4];
+        // debugFloatCB.GetData(debugFloatArray);
+
+        // Debug.Log($"id: 3, pixel: {DebugStringForColorSpace(debugFloatArray[0])}, colormap: {DebugStringForColorSpace(debugFloatArray[1])}, dot(diff, diff): {debugFloatArray[2].x}");
+        // debugFloatCB.Release();
+        // colorMapDebugCB.Release();
+
+
         return true;
     }
+
+    // private string DebugStringForColorSpace(Color color)
+    //     => $"(origin: {ColorUtility.ToHtmlStringRGB(color)}, linear: {ColorUtility.ToHtmlStringRGB(color.linear)}, gamma: {ColorUtility.ToHtmlStringRGB(color.gamma)})";
 
     // --debug--
     [ContextMenu("Debug: Write to file")]
