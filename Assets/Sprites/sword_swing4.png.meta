@@ -103,37 +103,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sword_swing4_0
-      rect:
-        serializedVersion: 2
-        x: 237
-        y: 920
-        width: 61
-        height: 20
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0fb80bc44984230a0800000000000000
-      internalID: -6903375477026550800
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: sword_swing4_1
       rect:
         serializedVersion: 2
-        x: 385
-        y: 299
-        width: 1109
-        height: 737
+        x: 0
+        y: 0
+        width: 1500
+        height: 1500
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -150,7 +128,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 22f7abfe57b604f72b1b9fbd9e11d771
     internalID: 0
     vertices: []
     indices: 

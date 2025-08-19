@@ -103,12 +103,12 @@ TextureImporter:
       name: sword_swing2_0
       rect:
         serializedVersion: 2
-        x: 37
-        y: 311
-        width: 636
-        height: 460
+        x: 0
+        y: 0
+        width: 1500
+        height: 1500
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e379f12ff0ee0429ebc75a6da7196052
     internalID: 0
     vertices: []
     indices: 

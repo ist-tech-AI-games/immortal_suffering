@@ -6710,11 +6710,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAttacking: 0
-  attackAnimationDuration: 0.5
+  attackAnimationDuration: 0.39
   leftAttack: {fileID: 1111358887120088195}
   rightAttack: {fileID: 3198102918705527551}
   upAttack: {fileID: 4514782051386146784}
   downAttack: {fileID: 1585974590688389094}
   swordAnimator: {fileID: 8724256512350779905}
-  parameterSetter: {fileID: 0}
   spriteTransform: {fileID: 4011848428913340950}
