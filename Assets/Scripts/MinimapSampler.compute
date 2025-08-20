@@ -1,46 +1,47 @@
-// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
 struct ColorMapEntry {
-    int ID; float4 Color;
+    int ID; float3 _Padding; float4 Color;
 };
 
 RWStructuredBuffer<int> Result;
 RWTexture2D<float4> DebugTex;  // Must have Width * Height size;
 Texture2D<float4> SourceTex;
-// SamplerState samplerSourceTex;
-SamplerState my_clamp_point_sampler;
+
+uint Width, Height;
+
+int FallbackColorID = -1;
+float4 FallBackColor = float4(0, 0, 0, 0);
 
 static const int COLORMAXCOUNT = 16;
 int ColorCount;
-// int ColorIDs[COLORMAXCOUNT];
-int FallbackColorID = -1;
-float CompareThreshold = 0.2;
-float AlphaThreshold = 0.5;
-// float4 ColorValues[COLORMAXCOUNT];
-float4 FallBackColor = float4(0, 0, 0, 0);
-
 StructuredBuffer<ColorMapEntry> ColorMap;
 
-int Width; int Height;
+float CompareThreshold = 0.2;
+float AlphaThreshold = 0.5;
+
+
+float3 gammaToLinear(float3 input)
+{
+    return input < 0.04045 ? input * (1.0 / 12.92) : pow((input + 0.055) * (1.0 / (1.0 + 0.055)), 2.4);
+}
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    if (id.x >= Width || id.y >= Height) return;
+    
     uint srcW, srcH;
     SourceTex.GetDimensions(srcW, srcH);
 
-    if (id.x >= srcW || id.y >= srcH) return;
-
-    float2 uv = (id.xy + 0.5) / float2(srcW, srcH);
-    float4 color = SourceTex.SampleLevel(my_clamp_point_sampler, uv, 0);
-
-    uint2 resultInd = uv * float2(Width, Height) - 0.5;
+    float2 uv = (id.xy + 0.5) / float2(Width, Height);
+    uint2 srcInd = uv * float2(srcW, srcH);
+    float4 color = SourceTex[srcInd.xy];
 
     int colorId = FallbackColorID;
     for (int i = 0; i < ColorCount; i++)
     {
-        float3 diff = color.xyz - ColorMap[i].Color.xyz;
+        float3 diff = color.xyz - gammaToLinear(ColorMap[i].Color.xyz);
         if (color.w >= AlphaThreshold && dot(diff, diff) < CompareThreshold)
         {
             colorId = ColorMap[i].ID;
@@ -48,7 +49,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         }
     }
 
-    Result[(Height - resultInd.y) * Width + resultInd.x] = colorId;
+    Result[(Height - id.y) * Width + id.x] = colorId;
 
     // ----- debug -----
 
@@ -57,10 +58,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     {
         if (ColorMap[j].ID == colorId)
         {
-            matchedColor = ColorMap[j].Color;
+            matchedColor.xyz = gammaToLinear(ColorMap[j].Color.xyz);
+            matchedColor.w = ColorMap[j].Color.w;
             break;
         }
     }
 
-    DebugTex[resultInd] = matchedColor;
+    DebugTex[id.xy] = matchedColor;
 }

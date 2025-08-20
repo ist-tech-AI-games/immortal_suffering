@@ -1,20 +1,9 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-
-// public struct ScreenInfo
-// {
-//     public Color[] pixels;
-//     public float updatedTime;
-
-//     public ScreenInfo(Color[] pixels, float updatedTime)
-//     {
-//         this.pixels = pixels;
-//         this.updatedTime = updatedTime;
-//     }
-// }
 
 public class InfoHandler : MonoBehaviour
 {
@@ -22,15 +11,16 @@ public class InfoHandler : MonoBehaviour
     [SerializeField] private ComputeShader computeShader;
     [SerializeField] private RenderTexture entireScreenTexture; // 전체 화면 텍스처
 
-    [Serializable]
+    [Serializable, StructLayout(LayoutKind.Sequential, Size = 32)]
     public struct ColorMap
     {
         public int Id;
+        [HideInInspector] public Vector3 _Padding;
         public Color Color;
     }
-    const int COLORMAPSTRUCTSIZE = sizeof(int) + 4 * sizeof(float);
+    const int COLORMAPSTRUCTSIZE = 32;
 
-    [Tooltip("Mapping of color - id. Warning: max 16 entries.")]
+    [Tooltip("Mapping of color - id.")]
     [SerializeField] private ColorMap[] colorMaps;
     [SerializeField] private ColorMap fallbackMap;
     [SerializeField] private Vector2Int sampleSize = new(160, 90);
@@ -50,11 +40,9 @@ public class InfoHandler : MonoBehaviour
         _SourceTexID = Shader.PropertyToID("SourceTex"),
         _ColorCountID = Shader.PropertyToID("ColorCount"),
         _ColorMapID = Shader.PropertyToID("ColorMap"),
-        // _ColorIDsID = Shader.PropertyToID("ColorIDs"),
         _FallbackIDID = Shader.PropertyToID("FallbackColorID"),
         _CompareThresholdID = Shader.PropertyToID("CompareThreshold"),
         _AlphaThresholdID = Shader.PropertyToID("AlphaThreshold"),
-        // _ColorValuesID = Shader.PropertyToID("ColorValues"),
         _FallbackColorID = Shader.PropertyToID("FallbackColor"),
         _WidthID = Shader.PropertyToID("Width"),
         _HeightID = Shader.PropertyToID("Height");
@@ -78,6 +66,7 @@ public class InfoHandler : MonoBehaviour
         desc.width = sampleSize.x; desc.height = sampleSize.y;
         desc.enableRandomWrite = true;
         debugTexture = new RenderTexture(desc);
+        debugTexture.filterMode = FilterMode.Point;
 
         if (rawImage != null) rawImage.texture = debugTexture;
         result = new int[sampleSize.x * sampleSize.y];
@@ -91,27 +80,12 @@ public class InfoHandler : MonoBehaviour
             Debug.LogError("Assertion Failed: resultBuffer.Length == sampleSize.x * sampleSize.y");
             return false;
         }
-        int maxMapping = 16;
-        if (colorMaps.Length > maxMapping)
-        {
-            Debug.LogError("Assertion Failed: colorMaps.Length <= maxMapping");
-            return false;
-        }
 
         int kernel = computeShader.FindKernel("CSMain");
         ComputeBuffer resultCB = new(pixelCnt, sizeof(int));
 
         ComputeBuffer colorMapCB = new(colorMaps.Length, COLORMAPSTRUCTSIZE);
         colorMapCB.SetData(colorMaps);
-
-        // int[] ids = new int[maxMapping];
-        // Vector4[] colors = new Vector4[maxMapping];
-
-        // for (int i = 0; i < colorMaps.Length; i++)
-        // {
-        //     ids[i] = colorMaps[i].Id;
-        //     colors[i] = colorMaps[i].Color;
-        // }
 
         computeShader.SetTexture(kernel, _SourceTexID, entireScreenTexture);
         computeShader.SetTexture(kernel, _DebugTexID, debugTexture);
@@ -123,11 +97,9 @@ public class InfoHandler : MonoBehaviour
         computeShader.SetInt(_FallbackIDID, fallbackMap.Id);
         computeShader.SetFloat(_CompareThresholdID, compareThreshold);
         computeShader.SetFloat(_AlphaThresholdID, alphaThreshold);
-        // computeShader.SetInts(_ColorIDsID, ids);
         computeShader.SetVector(_FallbackColorID, fallbackMap.Color);
-        // computeShader.SetVectorArray(_ColorValuesID, colors);
 
-        Vector2Int threadGroups = Vector2Int.CeilToInt(new Vector2(entireScreenTexture.width, entireScreenTexture.height) / 8f);
+        Vector2Int threadGroups = Vector2Int.CeilToInt((Vector2)sampleSize / 8f);
         computeShader.Dispatch(kernel, threadGroups.x, threadGroups.y, 1);
 
         resultCB.GetData(resultBuffer);
@@ -150,28 +122,4 @@ public class InfoHandler : MonoBehaviour
 
         File.WriteAllText(Path.Combine(Application.dataPath, "ColorIds.txt"), stringBuilder.ToString());
     }
-
-
-
-    // [SerializeField] private float updatedTime;
-    // [SerializeField] private Color[] pixels;
-
-    // void FixedUpdate()
-    // {
-    //     // Debug.Log("FixedUpdate called. Time.deltaTime: " + Time.fixedTime);
-    //     AsyncGPUReadback.Request(entireScreenTexture, 0, OnCompleteReadback);
-    // }
-
-    // void OnCompleteReadback(AsyncGPUReadbackRequest request)
-    // {
-    //     // Read the pixel data from the request
-    //     Color[] pixels = request.GetData<Color>().ToArray();
-    //     updatedTime = Time.fixedTime;
-    //     // Debug.Log(Time.fixedTime + " Readback completed successfully. Pixel count: " + pixels.Length);
-    // }
-
-    // public ScreenInfo GetScreenInfo()
-    // {
-    //     return new ScreenInfo(pixels, updatedTime);
-    // }
 }

@@ -5231,32 +5231,44 @@ MonoBehaviour:
   entireScreenTexture: {fileID: 8400000, guid: bbefbe0562dbd437d8bd6ae8d7eb306d, type: 2}
   colorMaps:
   - Id: 11
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0.5, g: 0.5, b: 0.8, a: 1}
   - Id: 10
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0.007843138, g: 1, b: 0, a: 1}
   - Id: 9
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0.015686275, g: 1, b: 0.8235294, a: 1}
   - Id: 8
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 1, g: 0.49803922, b: 0, a: 1}
   - Id: 7
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 1, g: 1, b: 0, a: 1}
   - Id: 6
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 1, g: 1, b: 1, a: 1}
   - Id: 5
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 1, g: 0.007843138, b: 0, a: 1}
   - Id: 4
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0.7019608, g: 0, b: 1, a: 1}
   - Id: 3
-    Color: {r: 0.35686275, g: 0.21960784, b: 0.003921569, a: 1}
+    _Padding: {x: 0, y: 0, z: 0}
+    Color: {r: 0.44313726, g: 0.27058825, b: 0.003921569, a: 1}
   - Id: 2
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0, g: 0, b: 1, a: 1}
   - Id: 0
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0, g: 0, b: 0, a: 0}
   fallbackMap:
     Id: 0
+    _Padding: {x: 0, y: 0, z: 0}
     Color: {r: 0, g: 0, b: 0, a: 0}
   sampleSize: {x: 160, y: 90}
-  compareThreshold: 0.15
+  compareThreshold: 0.01
   alphaThreshold: 0.5
   rawImage: {fileID: 183434938}
   debugTexture: {fileID: 0}
@@ -6033,11 +6045,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 314339922}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -720, y: -397}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 200}
   m_SizeDelta: {x: 192, y: 108}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1190776294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22716,7 +22728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -22830,10 +22842,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2240226953088409642, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2240226953088409642, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1616112503
+      objectReference: {fileID: 0}
+    - target: {fileID: 3613938439713050272, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3613938439713050272, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1616112503
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459028548776509124, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459028548776509124, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1616112503
+      objectReference: {fileID: 0}
     - target: {fileID: 4465943049488593604, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
       propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1745280896}
+    - target: {fileID: 4465943049488593604, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnDamageChanged
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091024090511857954, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091024090511857954, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1616112503
+      objectReference: {fileID: 0}
     - target: {fileID: 5491987566050444081, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
       propertyPath: m_Name
       value: Player
