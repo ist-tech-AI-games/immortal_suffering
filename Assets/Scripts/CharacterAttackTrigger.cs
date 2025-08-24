@@ -35,20 +35,36 @@ public class CharacterAttackTrigger : AttackTrigger
         isAttacking = true;
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    protected override void EnterTrigger(AHitTrigger target)
     {
-        base.OnTriggerEnter2D(collision);
-        collision.GetComponent<EnemyHitTrigger>()?.RegisterOnDestroyed(RemoveEnemyAHitTrigger);
-        if (isAttacking)
-        {
-            EnemyHitTrigger enemyHitTrigger = collision.GetComponent<EnemyHitTrigger>();
-            enemyHitTrigger.OnHit(damage, knockbackRatio, transform);
-        }
+        base.EnterTrigger(target);
+        if (target is EnemyHitTrigger enemyHit)
+            enemyHit.RegisterOnDestroyed(RemoveEnemyAHitTrigger);
     }
 
-    public void OnTriggerExit2D(Collider2D collision)
+    protected override void ExitTrigger(AHitTrigger target)
     {
-        base.OnTriggerExit2D(collision);
-        collision.GetComponent<EnemyHitTrigger>()?.UnregisterOnDestroyed(RemoveEnemyAHitTrigger);
+        base.ExitTrigger(target);
+        if (target is EnemyHitTrigger enemyHit)
+            enemyHit.UnregisterOnDestroyed(RemoveEnemyAHitTrigger);
     }
+
+    protected override bool ShouldAttack(AHitTrigger target) =>
+        isAttacking && target is EnemyHitTrigger;
+
+    // {
+    //     base.OnTriggerEnter2D(collision);
+    //     collision.GetComponent<EnemyHitTrigger>()?.RegisterOnDestroyed(RemoveEnemyAHitTrigger);
+    //     if (isAttacking)
+    //     {
+    //         EnemyHitTrigger enemyHitTrigger = collision.GetComponent<EnemyHitTrigger>();
+    //         enemyHitTrigger.OnHit(damage, knockbackRatio, transform);
+    //     }
+    // }
+
+    // public void OnTriggerExit2D(Collider2D collision)
+    // {
+    //     base.OnTriggerExit2D(collision);
+    //     collision.GetComponent<EnemyHitTrigger>()?.UnregisterOnDestroyed(RemoveEnemyAHitTrigger);
+    // }
 }
