@@ -1,0 +1,68 @@
+#pragma kernel CSMain
+
+struct ColorMapEntry {
+    int ID; float3 _Padding; float4 Color;
+};
+
+RWStructuredBuffer<int> Result;
+RWTexture2D<float4> DebugTex;  // Must have Width * Height size;
+Texture2D<float4> SourceTex;
+
+uint Width, Height;
+
+int FallbackColorID = -1;
+float4 FallBackColor = float4(0, 0, 0, 0);
+
+static const int COLORMAXCOUNT = 16;
+int ColorCount;
+StructuredBuffer<ColorMapEntry> ColorMap;
+
+float CompareThreshold = 0.2;
+float AlphaThreshold = 0.5;
+
+
+float3 gammaToLinear(float3 input)
+{
+    return input < 0.04045 ? input * (1.0 / 12.92) : pow((input + 0.055) * (1.0 / (1.0 + 0.055)), 2.4);
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= Width || id.y >= Height) return;
+    
+    uint srcW, srcH;
+    SourceTex.GetDimensions(srcW, srcH);
+
+    float2 uv = (id.xy + 0.5) / float2(Width, Height);
+    uint2 srcInd = uv * float2(srcW, srcH);
+    float4 color = SourceTex[srcInd.xy];
+
+    int colorId = FallbackColorID;
+    for (int i = 0; i < ColorCount; i++)
+    {
+        float3 diff = color.xyz - gammaToLinear(ColorMap[i].Color.xyz);
+        if (color.w >= AlphaThreshold && dot(diff, diff) < CompareThreshold)
+        {
+            colorId = ColorMap[i].ID;
+            break;
+        }
+    }
+
+    Result[(Height - id.y) * Width + id.x] = colorId;
+
+    // ----- debug -----
+
+    float4 matchedColor = FallBackColor;
+    for (int j = 0; j < ColorCount; j++)
+    {
+        if (ColorMap[j].ID == colorId)
+        {
+            matchedColor.xyz = gammaToLinear(ColorMap[j].Color.xyz);
+            matchedColor.w = ColorMap[j].Color.w;
+            break;
+        }
+    }
+
+    DebugTex[id.xy] = matchedColor;
+}

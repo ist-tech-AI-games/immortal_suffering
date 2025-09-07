@@ -29,26 +29,19 @@ namespace ImmortalSuffering
             }
         }
 
-        public bool TryGrab(GrabAgent agent, Action onReleased)
+        public bool Grab(GrabAgent agent, Action onReleased, bool evict = false)
         {
-            // 비활성화시 잡기 차단. 공중에서 잡지 못하게 하는 등의 로직에 사용 가능.
-            if (!enabled || IsGrabbed || !IsCharacterGrabbableState()) return false;
-            if (CurrentHolder == agent) return true;
+            if (!enabled || CurrentHolder == agent || !IsCharacterGrabbableState()) return false;
+            if (IsGrabbed)
+            {
+                if (!evict) return false;
+                Release();
+            }
+
             CurrentHolder = agent;
             this.onReleased += onReleased;
             onGrabStarted?.Invoke();
             return true;
-        }
-
-        public void EvictAndGrab(GrabAgent agent, Action onReleased)
-        {
-            if (!enabled || CurrentHolder == agent || !IsCharacterGrabbableState()) return;
-            if (CurrentHolder != null)
-                Release();
-
-            CurrentHolder = agent;
-            this.onReleased += onReleased;
-            onGrabStarted?.Invoke();
         }
 
         public void Release()

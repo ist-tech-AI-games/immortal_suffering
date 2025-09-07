@@ -8,47 +8,56 @@ public class AttackTrigger : MonoBehaviour
     [SerializeField] protected float knockbackRatio = 1.0f; // Ratio of knockback applied to the target
     [SerializeField] protected bool isTriggeredOnCollisionWithPlayer = true;
     [SerializeField] protected LayerMask targetLayer; // Layer mask to specify which layers this trigger interacts with
-    [SerializeField] protected List<AHitTrigger> inRangeTriggers;
     [SerializeField] protected UnityEvent onAttackPerformed;
+    protected HashSet<AHitTrigger> inRangeTriggers = new();
+
     public virtual void PerformAttack()
     {
-        for (int i = inRangeTriggers.Count - 1; i >= 0; i--)
-        {
-            Debug.Log($"Performing attack on {inRangeTriggers[i].name} with damage: {damage}, knockback ratio: {knockbackRatio}");
-            inRangeTriggers[i].OnHit(damage, knockbackRatio, transform);
-        }
-        if (inRangeTriggers.Count > 0)
-            onAttackPerformed?.Invoke();
-    }
-    private void Start()
-    {
-        inRangeTriggers = new List<AHitTrigger>();
+        // foreach (var trigger in inRangeTriggers)
+        // {
+        //     Debug.Log($"Performing attack on {trigger.name} with damage: {damage}, knockback ratio: {knockbackRatio}");
+        //     trigger.OnHit(damage, knockbackRatio, transform);
+        // }
+        // if (inRangeTriggers.Any())
+        //     onAttackPerformed?.Invoke();
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public void OnTriggerStay2D(Collider2D collision)
     {
-        if (!enabled) return;
-        var hitTrigger = collision.GetComponent<AHitTrigger>();
-        if (hitTrigger != null)
-        {
-            // Add the hit trigger to the in-range triggers list
-            inRangeTriggers.Add(hitTrigger);
-        }
+        if (!collision.TryGetComponent(out AHitTrigger hitTrigger)) return;
 
-        if (isTriggeredOnCollisionWithPlayer && targetLayer == (targetLayer | (1 << collision.gameObject.layer)))
-        {
-            PerformAttack();
-        }
+        if (ShouldAttack(hitTrigger) && !inRangeTriggers.Contains(hitTrigger))
+            EnterTrigger(hitTrigger);
+        if (!ShouldAttack(hitTrigger) && inRangeTriggers.Contains(hitTrigger))
+            ExitTrigger(hitTrigger);
+
+        // if (isTriggeredOnCollisionWithPlayer && targetLayer == (targetLayer | (1 << collision.gameObject.layer)))
+        // {
+        //     PerformAttack();
+        // }
     }
 
     // May Triggered when Object Destroyed at External
     public void OnTriggerExit2D(Collider2D collision)
     {
-        if (!enabled) return;
-        var outTrigger = collision.GetComponent<AHitTrigger>();
-        if (outTrigger != null)
-        {            // Remove the hit trigger from the in-range triggers list
-            inRangeTriggers.Remove(outTrigger);
-        }
+        if (collision.TryGetComponent(out AHitTrigger hitTrigger) && inRangeTriggers.Contains(hitTrigger))
+            ExitTrigger(hitTrigger);
+    }
+
+    protected virtual bool ShouldAttack(AHitTrigger target) =>
+        enabled
+        && target.enabled
+        && ((targetLayer & (1 << target.gameObject.layer)) != 0);
+
+    protected virtual void EnterTrigger(AHitTrigger target)
+    {
+        inRangeTriggers.Add(target);
+        target.OnHit(damage, knockbackRatio, transform);
+        onAttackPerformed?.Invoke();
+    }
+
+    protected virtual void ExitTrigger(AHitTrigger target)
+    {
+        inRangeTriggers.Remove(target);
     }
 }

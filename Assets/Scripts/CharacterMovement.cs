@@ -1,3 +1,6 @@
+using ImmortalSuffering;
+using Unity.Mathematics;
+using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,20 +12,75 @@ public enum PlayerState
     Jumping,
     DoubleJumping,
     AttackedAndStunned,
+    Grabbed,
 }
 
+public enum MoveStatus
+{
+    IDLE = 0,
+    Moving = 1,
+    ONAIR = 2,
+    STUNNED = 3
+}
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
-    [SerializeField] private Collider2D characterCollider; // Assuming you have a Collider for collision detection
+    private Rigidbody2D rb; // Assuming you have a Rigidbody for physics-based movement
+    private Collider2D characterCollider; // Assuming you have a Collider for collision detection
     [SerializeField] private Platform onFeetPlatform; // Collider for platform detection
     [SerializeField] private CharacterAttackSystem characterAttackSystem;
+    [SerializeField] private ParticleSystem damagedFlyingParticle;
     [Header("State Variables")]
-    [field: SerializeField] public PlayerState currentState { get; private set; } = PlayerState.Idle;
+    [SerializeField] private PlayerState _currentState; // Current state of the character
+    public PlayerState currentState
+    {
+        get
+        {
+            return _currentState;
+        }
+        private set
+        {
+            _currentState = value;
+            charSpriteRenderer.flipX = !faceIsLeft;
+            if(!isGrabbed) charSpriteRenderer.color = Color.white;
+            damagedFlyingParticle.Stop();
+            animatorSpeedSetter.SetFloat(isGrabbed ? 0.25f : 1.0f);
+            switch (value)
+            {
+                case PlayerState.Idle:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.IDLE);
+                    return;
+                case PlayerState.Moving:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.Moving);
+                    return;
+                case PlayerState.OnAirMoving:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
+                    return;
+                case PlayerState.Jumping:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
+                    return;
+                case PlayerState.DoubleJumping:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.ONAIR);
+                    return;
+                case PlayerState.AttackedAndStunned:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.STUNNED);
+                    damagedFlyingParticle.Play();
+                    return;
+                case PlayerState.Grabbed:
+                    animatorStatusSetter.SetInteger((int)MoveStatus.STUNNED);
+                    charSpriteRenderer.color = Color.red;
+                    return;
+            }
+        }
+    }
+
+    [SerializeField] private SpriteRenderer charSpriteRenderer;
+    [SerializeField] private AnimatorParameterSetter animatorStatusSetter; // Animator parameter setter for state changes
+    [SerializeField] private AnimatorParameterSetter animatorSpeedSetter; // Animator parameter setter for state changes
     [SerializeField] private int jumpCount; // Flag for jump state
     [SerializeField] private float remainingMoveTime; // Timer for movement state
     [SerializeField] private bool faceIsLeft; // Flag for moving left
+    [SerializeField] private bool isGrabbed;
     [SerializeField] private bool isOnGroundOrPlatform; // Flag for ground state
     [SerializeField] private bool isOnEnemy; // Flag for ground state
     private Vector2 beforeSpeed; // Used for Wall Bounce
@@ -41,9 +99,10 @@ public class CharacterMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
-        characterAttackSystem = GetComponent<CharacterAttackSystem>();
         groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
         enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
+        damagedFlyingParticle.gameObject.SetActive(true);
+        damagedFlyingParticle.Stop();
 
         //Variable Initialization
         rb.linearVelocity = Vector2.zero; // Reset velocity
@@ -68,9 +127,9 @@ public class CharacterMovement : MonoBehaviour
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
-        Debug.DrawRay(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
+        Debug.DrawRay(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
         // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
-        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
+        if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
             isOnGroundOrPlatform = true;
         }
@@ -78,7 +137,7 @@ public class CharacterMovement : MonoBehaviour
         {
             isOnGroundOrPlatform = false;
         }
-        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.02f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
+        if (enemyFeetHit = Physics2D.Raycast(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left, 0.96f, enemyMask))
         {
             isOnEnemy = true;
         }
@@ -91,7 +150,7 @@ public class CharacterMovement : MonoBehaviour
             (currentState == PlayerState.Moving || currentState == PlayerState.OnAirMoving))
         {
             rb.linearVelocityX =
-                moveSpeed *
+                    (moveSpeed) *
                 (currentState == PlayerState.OnAirMoving ? 0.5f : 1.0f) *
                 (faceIsLeft ? -1.0f : 1.0f) *
                  Mathf.Sin(remainingMoveTime / moveDelay); // Move left or right based on the flag
@@ -105,7 +164,7 @@ public class CharacterMovement : MonoBehaviour
                 {
                     currentState = PlayerState.Jumping;
                 }
-                else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
+                else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving || currentState == PlayerState.Grabbed)
                 {
                     currentState = PlayerState.Idle;
                 }
@@ -141,12 +200,14 @@ public class CharacterMovement : MonoBehaviour
         }
 
         // 피격 처리
-        if (currentState == PlayerState.AttackedAndStunned)
+        if (currentState == PlayerState.AttackedAndStunned && !isGrabbed)
         {
             beforeSpeed = rb.linearVelocity; // Store the velocity before applying knockback
-            rb.linearVelocity *= 0.99f; // Apply a slight damping effect to the velocity
-            if (rb.linearVelocity.magnitude < 0.1f)
+            charSpriteRenderer.flipX = beforeSpeed.x < 0;
+            rb.linearVelocity *= 0.92f; // Apply a slight damping effect to the velocity
+            if (rb.linearVelocity.magnitude < 0.5f)
             {
+                rb.linearVelocity = Vector2.zero; // Reset velocity
                 currentState = PlayerState.Idle; // Reset state to Idle if velocity is low
             }
         }
@@ -170,14 +231,28 @@ public class CharacterMovement : MonoBehaviour
         onDamageChanged?.Invoke(damageGot);
         rb.AddForce(
             new Vector2(
-                enemyPosition.position.x > transform.position.x ? -1.0f : 1.0f, // Determine knockback direction based on enemy position
-                1.0f // Apply upward force for knockback
-            ) * damageGot * knockbackRatio, ForceMode2D.Impulse // Apply knockback force
+                transform.position.x - enemyPosition.position.x, // Determine knockback direction based on enemy position
+                transform.position.y - enemyPosition.position.y
+            ).normalized * knockbackRatio * math.sqrt(damageGot) * 10 * math.sqrt(2), ForceMode2D.Impulse // Apply knockback force, 200% 일 때 200의 힘이 가해지는 것으로 수치 설정
         );
         if (knockbackRatio > .02f)
             currentState = PlayerState.AttackedAndStunned; // Set state to AttackedAndStunned
     }
 
+    public void CharacterGrabbedTriggered(bool isGrabbed)
+    {
+        if (isGrabbed)
+        {
+            currentState = PlayerState.Grabbed;
+            this.isGrabbed = true;
+        }
+        else
+        {
+            this.isGrabbed = false;
+            currentState = PlayerState.Idle;
+        }
+    }
+    
     // TestBounceWall에서 호출되는 메소드
     public void CharacterCollisionTriggered(Collision2D collision, float bounceRate, bool isPlatform = false)
     {
@@ -191,8 +266,8 @@ public class CharacterMovement : MonoBehaviour
 
     public void Attack(AttackDirection direction)
     {
-        if (attackingFlag) return; // Prevent multiple attacks at the same time
-        
+        if (attackingFlag || currentState == PlayerState.AttackedAndStunned || isGrabbed) return; // Prevent multiple attacks at the same time
+
         attackAnimationRemainingTime = characterAttackSystem.PerformAttack(direction); // Perform attack based on direction
         attackingFlag = true;
     }
@@ -238,7 +313,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 currentState = PlayerState.OnAirMoving; // Set state to OnAirMoving if jumping
             }
-            else if (currentState == PlayerState.Idle)
+            else if (currentState == PlayerState.Idle || currentState == PlayerState.Moving || currentState == PlayerState.Grabbed)
             {
                 currentState = PlayerState.Moving; // Set state to Moving if idle
             }

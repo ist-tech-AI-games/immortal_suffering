@@ -17,6 +17,7 @@ namespace ImmortalSuffering
         [SerializeField] private DamageInfo firstDmg = new DamageInfo { Damage = 5, KnockbackRatio = 1 };
         [SerializeField] private int fixedFramePerHit = 2;
         [SerializeField] private float damagePeriod = .8f;
+        [SerializeField] private bool hitOnEnter = false;
 
         private int tick = 0;
         private Dictionary<AHitTrigger, float> caughtTriggers = new();
@@ -41,7 +42,8 @@ namespace ImmortalSuffering
         {
             if (IsInLayerMask(collision.gameObject) && collision.TryGetComponent(out AHitTrigger hitTrigger))
             {
-                hitTrigger.OnHit(firstDmg.Damage, firstDmg.KnockbackRatio, transform);
+                if (hitOnEnter)
+                    hitTrigger.OnHit(firstDmg.Damage, firstDmg.KnockbackRatio, transform);
                 caughtTriggers[hitTrigger] = Time.fixedTime;
             }
         }
