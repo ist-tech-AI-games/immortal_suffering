@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using Unity.MLAgents;
+using System;
 
 namespace ImmortalSuffering
 {
@@ -10,13 +12,27 @@ namespace ImmortalSuffering
         [SerializeField] private TextMeshProUGUI textUI;
         [SerializeField] private string placeholder = "{0:0.00}s";
         private float started = 0f;
-
-        void Start()
+        private bool isEpisodeBeginCalled = false;
+        private void Awake()
         {
+            Academy.Instance.OnEnvironmentReset += OnEpisodeBegin;
+        }
+
+        private void Start()
+        {
+            if (!isEpisodeBeginCalled)
+            {
+                StartTimer();
+            }
+        }
+
+        private void OnEpisodeBegin()
+        {
+            isEpisodeBeginCalled = true;
             StartTimer();
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (Initialized) UpdateText();
         }

@@ -10,7 +10,7 @@ namespace ImmortalSuffering.Prototype
         [SerializeField] private Vector2 constant = Vector2.up;
         private Rigidbody2D rb2d;
 
-        void Start()
+        void Awake()
         {
             rb2d = GetComponentInParent<Rigidbody2D>();
         }

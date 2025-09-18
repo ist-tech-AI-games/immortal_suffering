@@ -118,6 +118,7 @@ MonoBehaviour:
           m_StringArgument: Turn
           m_BoolArgument: 1
         m_CallState: 2
+  isExploding: 0
 --- !u!114 &1606075112790662755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +347,7 @@ MonoBehaviour:
   onAllTargetLeaved:
     m_PersistentCalls:
       m_Calls: []
+  isExploding: 0
 --- !u!114 &6548458591141730130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,6 +373,7 @@ GameObject:
   - component: {fileID: 7055007604192867015}
   - component: {fileID: 5127105322121491991}
   - component: {fileID: 1515063978590711924}
+  - component: {fileID: 1581940528922530728}
   m_Layer: 11
   m_Name: BombKid
   m_TagString: Untagged
@@ -462,6 +465,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Target>k__BackingField: {fileID: 0}
   <FacingRight>k__BackingField: 0
+--- !u!114 &1581940528922530728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5645696491333430062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1faa853a806fd494c928cf68f89b79a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 2
 --- !u!1 &6275809571251475146
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,6 +816,7 @@ MonoBehaviour:
   onAllTargetLeaved:
     m_PersistentCalls:
       m_Calls: []
+  isExploding: 0
 --- !u!1 &7938119642786257777
 GameObject:
   m_ObjectHideFlags: 0

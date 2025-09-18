@@ -7,10 +7,10 @@ namespace ImmortalSuffering.Prototype
         [SerializeField] private Vector3 euler = Vector3.zero;
         private Quaternion rot;
 
-        void Start()
+        void Awake()
         {
             rot = Quaternion.Euler(euler);
-            
+
         }
 
         void FixedUpdate()

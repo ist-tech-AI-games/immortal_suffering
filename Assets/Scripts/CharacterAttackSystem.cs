@@ -18,7 +18,7 @@ public class CharacterAttackSystem : MonoBehaviour
     [Header("For Sword Moving")]
     [SerializeField] private Transform spriteTransform;
 
-    void Start()
+    void Awake()
     {
         animator = GetComponent<Animator>();
     }

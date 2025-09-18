@@ -18,6 +18,7 @@ namespace ImmortalSuffering
         [SerializeField] private UnityEvent onGrabReleased;
         private Animator animator;
         private Grabbable currentGrabbing = null;
+        public bool IsGrabbing { get { return currentGrabbing != null; } }
         private Coroutine coroutine;
         private ContactFilter2D contactFilter;
 
@@ -51,8 +52,8 @@ namespace ImmortalSuffering
 
             currentGrabbing = grabbable;
 
-            constraint.SetSources(new List<ConstraintSource>() {new ConstraintSource() {sourceTransform = target, weight = 1f}});
-            Vector3 positionOffset = target.InverseTransformPoint( constraint.transform.position);
+            constraint.SetSources(new List<ConstraintSource>() { new ConstraintSource() { sourceTransform = target, weight = 1f } });
+            Vector3 positionOffset = target.InverseTransformPoint(constraint.transform.position);
             Quaternion rotationOffset = Quaternion.Inverse(target.rotation) * constraint.transform.rotation;
             constraint.SetTranslationOffset(0, positionOffset);
             constraint.SetRotationOffset(0, rotationOffset.eulerAngles);

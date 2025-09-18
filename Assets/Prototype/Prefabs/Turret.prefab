@@ -257,6 +257,7 @@ MonoBehaviour:
     KnockbackRatio: 0
   fixedFramePerHit: 2
   damagePeriod: 0.8
+  hitOnEnter: 0
 --- !u!1 &3240951913214807582
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,6 +633,7 @@ GameObject:
   - component: {fileID: 4071904895940522984}
   - component: {fileID: 5535133039125680680}
   - component: {fileID: 1869806664449111878}
+  - component: {fileID: 3072196982716057025}
   m_Layer: 10
   m_Name: Turret
   m_TagString: Untagged
@@ -676,7 +678,7 @@ MonoBehaviour:
   shootPosition: {fileID: 4696752436732836068}
   parentAfterShoot: {fileID: 0}
   loadDelay: 0.5
-  shootDelay: 2.5
+  shootDelay: 0.5
 --- !u!95 &1869806664449111878
 Animator:
   serializedVersion: 7
@@ -699,6 +701,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3072196982716057025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6336660662771533221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1faa853a806fd494c928cf68f89b79a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 3
 --- !u!1 &7459053730834196809
 GameObject:
   m_ObjectHideFlags: 0

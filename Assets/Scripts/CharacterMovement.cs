@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.MLAgents;
 
 public enum PlayerState
 {
@@ -42,7 +43,7 @@ public class CharacterMovement : MonoBehaviour
         {
             _currentState = value;
             charSpriteRenderer.flipX = !faceIsLeft;
-            if(!isGrabbed) charSpriteRenderer.color = Color.white;
+            if (!isGrabbed) charSpriteRenderer.color = Color.white;
             damagedFlyingParticle.Stop();
             animatorSpeedSetter.SetFloat(isGrabbed ? 0.25f : 1.0f);
             switch (value)
@@ -95,40 +96,55 @@ public class CharacterMovement : MonoBehaviour
     [Header("Events")]
     [SerializeField] private UnityEvent<float> onDamageChanged;
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         characterCollider = GetComponent<Collider2D>();
-        groundMask = LayerMask.GetMask(new string[] { "Wall", "Ground", "Platform" });
-        enemyMask = LayerMask.GetMask(new string[] { "EnemyAtkHit" });
-        damagedFlyingParticle.gameObject.SetActive(true);
-        damagedFlyingParticle.Stop();
+        groundMask = LayerMask.GetMask("Wall", "Ground", "Platform");
+        enemyMask = LayerMask.GetMask("EnemyAtkHit");
 
-        //Variable Initialization
-        rb.linearVelocity = Vector2.zero; // Reset velocity
-        currentState = PlayerState.Idle; // Start in Idle state
-        jumpCount = 0; // Reset jump count
-        remainingMoveTime = 0.0f; // Reset move timer
-        faceIsLeft = false; // Start facing right
-        isOnGroundOrPlatform = false; // Reset ground state
-        isOnEnemy = false; // Reset enemy state
-        onFeetPlatform = null; // Reset onFeetPlatform
-        damageGot = 0.0f; // Reset damage taken
+        if (damagedFlyingParticle)
+        {
+            damagedFlyingParticle.gameObject.SetActive(true);
+            damagedFlyingParticle.Stop();
+        }
+
+        downwardHit = default;
+        enemyFeetHit = default;
+        Academy.Instance.OnEnvironmentReset += Reset;
+        if (!Academy.Instance.IsCommunicatorOn)
+        {
+            Reset();
+        }
+    }
+
+    private void Reset()
+    {
+        rb.linearVelocity = Vector2.zero;
+
+        currentState = PlayerState.Idle;
+        jumpCount = 0;
+        remainingMoveTime = 0f;
+        faceIsLeft = false;
+        isOnGroundOrPlatform = false;
+        isOnEnemy = false;
+        onFeetPlatform = null;
+
+        damageGot = 0f;
         onDamageChanged?.Invoke(damageGot);
-
-        Physics2D.queriesHitTriggers = false; // Disable trigger queries for raycasts
+        Physics2D.queriesHitTriggers = false;
     }
 
     private LayerMask groundMask;
     private LayerMask enemyMask;
-    private RaycastHit2D downwardHit = new RaycastHit2D();
-    private RaycastHit2D enemyFeetHit = new RaycastHit2D();
+    private RaycastHit2D downwardHit;
+    private RaycastHit2D enemyFeetHit;
     private void FixedUpdate()
     {
         transform.rotation = Quaternion.identity; // Reset rotation to prevent rotation issues
 
         Debug.DrawRay(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left * 0.96f, Color.red); // Draw ray for debugging
-        // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
+                                                                                                                           // Raycast 처리 - 현재 캐릭터의 발 아래 무언가 있는지 확인
         if (downwardHit = Physics2D.Raycast(transform.position + Vector3.down * 1.56f + Vector3.right * 0.48f, Vector2.left, 0.96f, groundMask))
         {
             isOnGroundOrPlatform = true;
@@ -252,7 +268,7 @@ public class CharacterMovement : MonoBehaviour
             currentState = PlayerState.Idle;
         }
     }
-    
+
     // TestBounceWall에서 호출되는 메소드
     public void CharacterCollisionTriggered(Collision2D collision, float bounceRate, bool isPlatform = false)
     {
@@ -324,8 +340,16 @@ public class CharacterMovement : MonoBehaviour
             if (currentState == PlayerState.Idle || currentState == PlayerState.Moving)
             {
                 jumpCount = 1; // Set jumping flag
-                if (downwardHit.transform.TryGetComponent(out onFeetPlatform))
-                    onFeetPlatform.SetExcludeLayers();
+
+                // Sometimes downwardHit.transform is null
+                if (downwardHit.transform != null)
+                {
+                    if (downwardHit.transform.TryGetComponent(out onFeetPlatform))
+                    {
+                        onFeetPlatform.SetExcludeLayers();
+                    }
+                }
+
                 if (currentState == PlayerState.Idle)
                 {
                     currentState = PlayerState.Jumping; // Set state to Jumping
