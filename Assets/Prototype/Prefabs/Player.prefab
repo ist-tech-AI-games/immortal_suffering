@@ -6000,7 +6000,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SimulateIfInputIsInputed: 0
   isUserInputed: 0
-  SimulateEnabled: 1
   moveInput: 0000000000
   characterMovement: {fileID: 4465943049488593604}
 --- !u!114 &7356906493029875408
@@ -6070,7 +6069,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterDamageUI, Assembly-CSharp
-        m_MethodName: OnDamageChanged
+        m_MethodName: 
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -23061,10 +23061,6 @@ PrefabInstance:
       propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1745280896}
-    - target: {fileID: 4465943049488593604, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
-      propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnDamageChanged
-      objectReference: {fileID: 0}
     - target: {fileID: 5091024090511857954, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
       propertyPath: m_SortingLayer
       value: 6

@@ -122,7 +122,6 @@ public class CharacterMovement : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
 
-        currentState = PlayerState.Idle;
         jumpCount = 0;
         remainingMoveTime = 0f;
         faceIsLeft = false;
@@ -133,6 +132,11 @@ public class CharacterMovement : MonoBehaviour
         damageGot = 0f;
         onDamageChanged?.Invoke(damageGot);
         Physics2D.queriesHitTriggers = false;
+    }
+
+    private void Start()
+    {
+        currentState = PlayerState.Idle;
     }
 
     private LayerMask groundMask;
