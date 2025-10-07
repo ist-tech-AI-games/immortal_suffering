@@ -27,12 +27,14 @@ public class PlayerAgent : Agent
     private int i = 0;
     private bool isInitialized = false;
 
+    private bool[] filteredMoveInput;
     public override void OnEpisodeBegin()
     {
         moveInput = new bool[8] { false, false, false, false, false, false, false, false };
         goalPosition = goalTransform.position;
 
         emptyVector2D = new Vector2(0f, 0f);
+        filteredMoveInput = new bool[4] { false, false, false, false };
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -108,7 +110,7 @@ public class PlayerAgent : Agent
             {
                 Debug.LogError("Enemy Type is not set properly.");
             }
-            sensor.AddOneHotObservation((int)enemyType, 4);
+            sensor.AddOneHotObservation((int)enemyType, 3);
             sensor.AddObservation(enemyPosition);
             sensor.AddObservation(enemyVelocity);
             sensor.AddObservation(enemyHealth);
@@ -148,7 +150,7 @@ public class PlayerAgent : Agent
         bool filteredA = (a != d) && a;
         bool filteredD = (a != d) && d;
 
-        bool[] filteredMoveInput = new bool[4];
+
         filteredMoveInput[0] = filteredW;
         filteredMoveInput[1] = filteredA;
         filteredMoveInput[2] = filteredS;
@@ -156,8 +158,7 @@ public class PlayerAgent : Agent
 
         if (filteredA || filteredD || filteredW || filteredS)
         {
-
-            characterMovement.Move(moveInput);
+            characterMovement.Move(filteredMoveInput);
         }
 
         bool up = da[4] == 1;
