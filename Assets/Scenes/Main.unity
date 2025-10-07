@@ -3622,7 +3622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 113
+    VectorObservationSize: 103
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -3640,6 +3640,21 @@ MonoBehaviour:
   m_UseChildActuators: 1
   m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
+--- !u!114 &428710463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428710436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 1
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1
 --- !u!1 &444729952
 GameObject:
   m_ObjectHideFlags: 0
@@ -6173,7 +6188,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1190776293
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23061,6 +23076,10 @@ PrefabInstance:
       propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1745280896}
+    - target: {fileID: 4465943049488593604, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      propertyPath: onDamageChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnDamageChanged
+      objectReference: {fileID: 0}
     - target: {fileID: 5091024090511857954, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
       propertyPath: m_SortingLayer
       value: 6
@@ -23126,6 +23145,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5491987566050444081, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 428710455}
+    - targetCorrespondingSourceObject: {fileID: 5491987566050444081, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 428710463}
   m_SourcePrefab: {fileID: 100100000, guid: e5b3eddff5da04a6d9c04232784beaf2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
