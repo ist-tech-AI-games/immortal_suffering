@@ -49,8 +49,8 @@ public class PlayerAgent : Agent
                 float[] enemyPadding = new float[10];
                 sensor.AddObservation(enemyPadding);
             }
-            Debug.Log($"Observations Collected: {sensor.ObservationSize()}, Enemy Count: {enemyParent.transform.childCount}/{maxEnemyCount}");
-            Debug.Log("Zero Padding Applied for Initialization");
+            // Debug.Log($"Observations Collected: {sensor.ObservationSize()}, Enemy Count: {enemyParent.transform.childCount}/{maxEnemyCount}");
+            // Debug.Log("Zero Padding Applied for Initialization");
 
             return;
         }
@@ -127,7 +127,7 @@ public class PlayerAgent : Agent
             sensor.AddObservation(false);
         }
 
-        Debug.Log($"Observations Collected: {sensor.ObservationSize()}, Enemy Count: {enemyParent.transform.childCount}/{maxEnemyCount}");
+        // Debug.Log($"Observations Collected: {sensor.ObservationSize()}, Enemy Count: {enemyParent.transform.childCount}/{maxEnemyCount}");
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
