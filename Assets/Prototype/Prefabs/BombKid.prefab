@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 5127105322121491991}
   - component: {fileID: 1515063978590711924}
   - component: {fileID: 1581940528922530728}
-  m_Layer: 11
+  m_Layer: 10
   m_Name: BombKid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -794,7 +794,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetLayer:
     serializedVersion: 2
-    m_Bits: 3584
+    m_Bits: 2560
   onTargetDetected:
     m_PersistentCalls:
       m_Calls:
