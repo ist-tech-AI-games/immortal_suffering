@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -11,17 +11,17 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Platform
+  - Wall
+  - CharacterAtkHit
+  - EnemyAtkHit
+  - Projectile
+  - CharacterTerrainInteraction
+  - EnemyTerrainInteraction
+  - Sight
+  - SightTarget
+  - MinimapElement
   - 
   - 
   - 
@@ -41,3 +41,44 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: MinimapElement
+    uniqueID: 1445739141
+    locked: 0
+  - name: Wall
+    uniqueID: 3090358417
+    locked: 0
+  - name: Goal
+    uniqueID: 1177400267
+    locked: 0
+  - name: Arrow
+    uniqueID: 3280525751
+    locked: 0
+  - name: Skeleton_Back
+    uniqueID: 372027897
+    locked: 0
+  - name: Player
+    uniqueID: 2678854793
+    locked: 0
+  - name: PlayerAttack
+    uniqueID: 2723930397
+    locked: 0
+  - name: Skeleton_Front
+    uniqueID: 864475777
+    locked: 0
+  - name: BombKid
+    uniqueID: 2895604581
+    locked: 0
+  - name: Bomb_Explosion
+    uniqueID: 4252906159
+    locked: 0
+  - name: Turret
+    uniqueID: 1466284535
+    locked: 0
+  - name: Platform
+    uniqueID: 3037128695
+    locked: 0
+  - name: HUD
+    uniqueID: 2834377541
+    locked: 0
+  m_RenderingLayers:
+  - Default
