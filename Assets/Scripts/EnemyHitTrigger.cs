@@ -16,6 +16,8 @@ public class EnemyHitTrigger : AHitTrigger
     private Rigidbody2D rb2d;
     private float lastHit = 0f;
 
+    public float RemainingHealth { get { return remainingHealth; } }
+
     private void Start()
     {
         OnDestroyed = null; // Initialize the OnDestroyed event
@@ -36,7 +38,7 @@ public class EnemyHitTrigger : AHitTrigger
     {
         if (!enabled                                 // 비활성화로 피해 차단 가능.
             || Time.time - lastHit < invincibleTime
-            || damage < minAcceptableDamage) return; 
+            || damage < minAcceptableDamage) return;
         remainingHealth -= damage;
 
         // TODO: Extract knockback logic to somewhere else

@@ -8,7 +8,7 @@ namespace ImmortalSuffering
         private int paramHash;
         private Animator animator;
 
-        void Start()
+        void Awake()
         {
             animator = GetComponentInParent<Animator>();
             paramHash = Animator.StringToHash(paramName);

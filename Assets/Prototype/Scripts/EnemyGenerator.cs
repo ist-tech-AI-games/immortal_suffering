@@ -1,4 +1,8 @@
 using UnityEngine;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
+using UnityEngine.Events;
 
 namespace ImmortalSuffering
 {
@@ -20,20 +24,42 @@ namespace ImmortalSuffering
         }
         [SerializeField] private PrefabEntry[] prefabs;
 
-        [SerializeField] private int minCount = 3;
-        [SerializeField] private int maxCount = 10;
+        [SerializeField] private int minCount;
+        [SerializeField] private int maxCount;
+
+        [SerializeField] private UnityEvent<int> onEnemiesGenerated;
+
+        private void Awake()
+        {
+            Academy.Instance.OnEnvironmentReset += ResetEnemies;
+
+            // ResetEnemies();
+        }
+
+        private void ResetEnemies()
+        {
+            ClearEnemies();
+            int enemyCount = Generate();
+            onEnemiesGenerated?.Invoke(enemyCount);
+        }
 
         [ContextMenu("Generate Enemies")]
-        public void Generate()
+        public int Generate()
         {
             if (minCount < 0 || maxCount < 0 || minCount > maxCount || maxCount > spawnPoints.Length)
             {
                 Debug.LogError($"Assertion 0 <= minCount({minCount}) <= maxCount({maxCount}) <= spawnPoints.Length({spawnPoints.Length}) failed.");
-                return;
+                return 0;
             }
 
-            Random.InitState(Seed.GetHashCode());
+            // Python API is attached
+            if (Academy.Instance.IsCommunicatorOn)
+                Random.InitState(Academy.Instance.EnvironmentParameters.GetWithDefault("seed", 1234f).GetHashCode());
+            else // On Editor or Standalone
+                Random.InitState(Seed.GetHashCode());
+
             int enemyCount = Random.Range(minCount, maxCount + 1);
+
 
             // reservoir algorithm
             Transform[] samplePoints = new Transform[enemyCount];
@@ -50,6 +76,8 @@ namespace ImmortalSuffering
             {
                 Instantiate(SelectPrefab(), point.position, Quaternion.identity, enemyParent);
             }
+
+            return enemyCount;
         }
 
         // For Debug Purposes

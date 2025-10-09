@@ -11,6 +11,9 @@ public class TriggerDetector : MonoBehaviour
     [SerializeField] private UnityEvent onAllTargetLeaved;
     private HashSet<Collider2D> overlappingTriggers = new();
 
+    [SerializeField] private bool isExploding;
+    public bool IsExploding { get { return isExploding; } }
+
     private bool MatchLayer(Collider2D collider2D) =>
         (targetLayer & (1 << collider2D.gameObject.layer)) != 0;
 
@@ -18,6 +21,7 @@ public class TriggerDetector : MonoBehaviour
     {
         onTargetDetected?.Invoke();
         overlappingTriggers.Add(collider2D);
+        isExploding = true;
     }
 
     private void LeaveTrigger(Collider2D collider2D)

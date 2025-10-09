@@ -6,7 +6,7 @@ public class Platform : MonoBehaviour
     [SerializeField] private float remainingTime;
     [SerializeField] private bool isCharacterDownJumping; // Flag to check if the character is falling
     public bool IsCharacterFalling => remainingTime > 0.0f; // Property to check if the character is falling
-    private void Start()
+    private void Awake()
     {
         platformCollider = GetComponent<Collider2D>();
         remainingTime = 0.0f;

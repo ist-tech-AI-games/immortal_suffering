@@ -9,7 +9,7 @@ class CharacterHit : AHitTrigger
     [SerializeField] private UnityEvent onHit;
     private float lastHit = 0f;
 
-    private void Start()
+    private void Awake()
     {
         characterMovement = GetComponent<CharacterMovement>();
     }

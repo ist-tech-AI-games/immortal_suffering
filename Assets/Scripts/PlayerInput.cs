@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.MLAgents;
 
 public enum AttackDirection
 {
@@ -33,7 +34,7 @@ public class PlayerInput : MonoBehaviour
     public bool SimulateIfInputIsInputed = false;
     [Header("Flags")]
     [SerializeField] private bool isUserInputed = false;
-    [SerializeField] private bool SimulateEnabled = true;
+    // [SerializeField] private bool SimulateEnabled = true;
     [Header("Input")]
     [SerializeField] private bool[] moveInput = new bool[8];
     [Header("Components")]
@@ -70,7 +71,14 @@ public class PlayerInput : MonoBehaviour
 
     private void FixedUpdate()
     {
+        /*      
         if (!SimulateEnabled)
+        {
+            return;
+        }
+        */
+
+        if (Academy.Instance.IsCommunicatorOn)
         {
             return;
         }
