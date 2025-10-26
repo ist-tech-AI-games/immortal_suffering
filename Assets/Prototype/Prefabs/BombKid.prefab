@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 6260804526141130545}
   - component: {fileID: 6637193442160720161}
   - component: {fileID: 5425042500553710275}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: ExplodeTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
